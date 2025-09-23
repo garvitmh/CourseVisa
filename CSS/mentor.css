@@ -1,0 +1,95 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.hero {
+    text-align: center;
+    padding: 2rem;
+}
+
+.apply-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.apply-section img {
+    max-width: 300px;
+    border-radius: 10px;
+}
+
+.apply-section .info {
+    max-width: 600px;
+}
+
+.apply-section .info ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.apply-section .info button {
+    background-color: #7b5aff;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.video-section {
+    text-align: center;
+    padding: 2rem;
+}
+
+.video-section video {
+    width: 80%;
+    max-width: 700px;
+    border: 5px solid #7b5aff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.steps {
+    text-align: center;
+    padding: 2rem;
+}
+
+.steps img {
+    max-width: 600px;
+    border-radius: 10px;
+}
+
+.subscribe {
+    background-color: #1a1a40;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+}
+
+.subscribe input[type="email"] {
+    padding: 0.5rem;
+    width: 250px;
+    border-radius: 5px;
+    border: none;
+    margin-right: 1rem;
+}
+
+.subscribe button {
+    padding: 0.6rem 1rem;
+    background-color: #7b5aff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn {
+    text-decoration: none;
+    font-weight: bold;
+}

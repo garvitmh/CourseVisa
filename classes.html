@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coursiva - Course Details</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="CSS/nav_foot.css">
+  <link rel="stylesheet" href="CSS/classes.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-container">
+        <a href="index.html" class="logo">
+            <img src="./photo/e-learning.png" alt="Coursiva Logo">
+        </a>
+
+        <nav class="main-nav">
+            <ul class="nav-links">
+                <li><a href="#">Shop</a></li>
+                <li class="dropdown">
+                    <a href="#">For Kindergarten <span class="arrow">&#9662;</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="classes.html">All Kindergarten</a></li>
+                        <li><a href="classes.html">Alphabet</a></li>
+                        <li><a href="classes.html">Numbers</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">For High School <span class="arrow">&#9662;</span></a>
+                     <ul class="dropdown-menu">
+                        <li><a href="classes.html">All High School</a></li>
+                        <li><a href="classes.html">Standard 1-5</a></li>
+                        <li><a href="classes.html">Standard 6-10</a></li>
+                        <li><a href="classes.html">O-Level / A-Level</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#">For College <span class="arrow">&#9662;</span></a>
+                     <ul class="dropdown-menu">
+                        <li><a href="#">All College</a></li>
+                        <li><a href="#">Science</a></li>
+                        <li><a href="#">Arts & Humanities</a></li>
+                        <li><a href="#">Engineering</a></li>
+                    </ul>
+                </li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="mentor.html">Become a Mentor</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <a href="#" class="action-btn cart-btn">
+                Cart (0)
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.075 1.5H3.825C3.42875 1.5 3.05104 1.65804 2.776 1.93301C2.50096 2.20804 2.34292 2.58575 2.34292 2.98197V17.018C2.34292 17.4142 2.50096 17.792 2.776 18.067C3.05104 18.342 3.42875 18.5 3.825 18.5H16.175C16.5712 18.5 16.9489 18.342 17.224 18.067C17.499 17.792 17.6571 17.4142 17.6571 17.018V2.98197C17.6571 2.58575 17.499 2.20804 17.224 1.93301C16.9489 1.65804 16.5712 1.5 16.175 1.5H14.925" stroke="#292B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.9926 1.5V2.98197C12.9926 3.37819 12.8345 3.75591 12.5595 4.03088C12.2845 4.30585 11.9068 4.46389 11.5106 4.46389H8.48938C8.09316 4.46389 7.71544 4.30585 7.44047 4.03088C7.1655 3.75591 7.00746 3.37819 7.00746 2.98197V1.5" stroke="#292B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <div class="dropdown">
+                <a href="#" class="action-btn account-btn">
+                    My Account <span class="arrow">&#9662;</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 10C12.3012 10 14.1667 8.13452 14.1667 5.83333C14.1667 3.53214 12.3012 1.66667 10 1.66667C7.69881 1.66667 5.83333 3.53214 5.83333 5.83333C5.83333 8.13452 7.69881 10 10 10ZM10 10C5.85786 10 2.5 11.5559 2.5 14.1667V18.3333H17.5V14.1667C17.5 11.5559 14.1421 10 10 10Z" stroke="#292B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="signup.html">Sign Up</a></li>
+                </ul>
+            </div>
+        </div>
+        <button class="hamburger-menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+  <section class="course-container">
+    <div class="course-video">
+      <video id="mainVideo" width="100%" height="400" controls>
+        <source src="video/classes1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <h2 id="videoTitle">Maths - Introduction</h2>
+    </div>
+
+    <aside class="course-playlist">
+      <h3>Course Playlists</h3>
+      <ul>
+        <li class="active" data-video="video/classes1.mp4" data-title="Animated Stories - Types of Teacher">Animated Stories - Types of Teacher (10:10)</li>
+        <li data-video="video/classes2.mp4" data-title="Maths - Introduction">Maths - Introduction (12:18)</li>
+        <li data-video="video/classes3.mp4" data-title="Science - For Standard 5 Students">Science - For Standard 5 Students (11:39)</li>
+        <li data-video="video/classes4.mp4" data-title="History - For Standard 8 Students">History - For Standard 8 Students (9:51)</li>
+      </ul>
+    </aside>
+  </section>
+
+  <section class="course-details">
+    <div class="details-text">
+      <h3>Course Details</h3>
+      <p>
+        This Intellectual Property Rights (IPR) course introduces you to the fundamentals of patents, copyrights, trademarks, trade secrets, and industrial designs. 
+        You will learn how to protect your innovations, manage IP assets, and understand international IP laws. 
+        The course includes practical case studies to help learners connect theory with real-world application.
+      </p>
+
+      <h3>Certification</h3>
+      <p>
+        Upon successful completion of this course, you will receive a verified certificate 
+        from Coursiva, demonstrating your knowledge of Intellectual Property Rights. 
+        This certificate can be shared on LinkedIn and with potential employers.
+      </p>
+
+      <h3>Who this course is for</h3>
+      <ul>
+        <li>Students in law, business, or engineering who want to understand IP basics.</li>
+        <li>Entrepreneurs and startups looking to protect their ideas and innovations.</li>
+        <li>Professionals in R&D, design, or product management roles.</li>
+        <li>Anyone interested in learning about global IP rights and enforcement.</li>
+      </ul>
+
+      <h3>What you'll learn in this course:</h3>
+      <ul style="list-style-type: disc;">
+        <li>Introduction to Intellectual Property Rights and their importance.</li>
+        <li>Patents: filing, duration, and case studies of patent disputes.</li>
+        <li>Trademarks and branding strategies for businesses.</li>
+        <li>Copyrights in creative industries: music, films, books, and software.</li>
+        <li>Trade secrets and industrial designs.</li>
+        <li>International IP laws: WIPO, TRIPS Agreement, and regional differences.</li>
+      </ul>
+      </div>
+
+    <div class="details-box">
+      <p><b>Price:</b> $49.00</p>
+      <p><b>Instructor:</b> Stan Muller</p>
+      <p><b>Ratings:</b> ⭐⭐⭐⭐⭐</p>
+      <p><b>Duration:</b> 60 minutes</p>
+      <p><b>Lessons:</b> 6</p>
+      <p><b>Quizzes:</b> 5</p>
+      <p><b>Certificate:</b> Yes</p>
+      <p><b>Language:</b> English</p>
+      <p><b>Access:</b> Lifetime</p>
+      <button class="btn">Purchase Course</button>
+    </div>
+  </section>
+
+  <section class="similar-courses">
+    <h3>Similar Courses</h3>
+    <div class="course-list">
+      <div class="course-card">
+        <a target="_blank" href="https://www.storytel.com/in/books/the-three-musketeers-1902416">
+          <img src="three masketeers4.jpg" alt="teacher img" height="50" width="50">
+        </a>
+        The Three Musketeers - $40.00 ⭐⭐⭐⭐⭐</div>
+      <div class="course-card">
+         <a target="_blank" href="https://www.amazon.in/Three-Musketeers-Alexandre-Dumas-ebook/dp/B00F5W7S7G">
+          <img src="three masketeers 2.jpg" alt="three masketeers" height="50" width="50">
+        The Three Musketeers - $40.00 ⭐⭐⭐⭐⭐</div>
+      <div class="course-card">
+         <a target="_blank" href="https://www.imdb.com/title/tt1509767/">
+          <img src="three masketeers 3.jpg" alt="three masketeers" height="50" width="50">
+        The Three Musketeers - $40.00 ⭐⭐⭐⭐⭐</div>
+      <div class="course-card">
+         <a target="_blank" href="https://atlanticbooks.com/products/the-three-musketeers-alexandre-dumas">
+          <img src="three masketeers1.jpg" alt="three masketeers" height="50" width="50">
+        The Three Musketeers - $40.00 ⭐⭐⭐⭐⭐</div>
+    </div>
+  </section>
+
+  <div class="more-classes-btn-wrap">
+    <button id="more-courses-btn" class="btn">More Courses</button>
+  </div>
+
+  <section class="subscribe">
+    <h3>Subscribe For Get Update Every New Courses</h3>
+    <p>20k+ students daily learn with Coursiva. Subscribe for new courses.</p>
+    <input type="email" placeholder="Enter your email">
+    <button class="btn">Subscribe</button>
+  </section>
+
+
+<script src="JS/nav_foot.js"></script>
+<script src="JS/classes.js"></script>
+
+</body>
+</html>

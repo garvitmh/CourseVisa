@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Courses - Coursiva</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="CSS/nav_foot.css">
+    <link rel="stylesheet" href="CSS/courses.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="./photo/e-learning.png" alt="Coursiva Logo">
+            </a>
+
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li><a href="#">Shop</a></li>
+                    <li class="dropdown">
+                        <a href="#">For Kindergarten <span class="arrow">&#9662;</span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="classes.html">All Kindergarten</a></li>
+                            <li><a href="classes.html">Alphabet</a></li>
+                            <li><a href="classes.html">Numbers</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">For High School <span class="arrow">&#9662;</span></a>
+                         <ul class="dropdown-menu">
+                            <li><a href="classes.html">All High School</a></li>
+                            <li><a href="classes.html">Standard 1-5</a></li>
+                            <li><a href="classes.html">Standard 6-10</a></li>
+                            <li><a href="classes.html">O-Level / A-Level</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">For College <span class="arrow">&#9662;</span></a>
+                         <ul class="dropdown-menu">
+                            <li><a href="#">All College</a></li>
+                            <li><a href="#">Science</a></li>
+                            <li><a href="#">Arts & Humanities</a></li>
+                            <li><a href="#">Engineering</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="mentor.html">Become a Mentor</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <a href="#" class="action-btn cart-btn">
+                    Cart (0)
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.075 1.5H3.825C3.42875 1.5 3.05104 1.65804 2.776 1.93301C2.50096 2.20804 2.34292 2.58575 2.34292 2.98197V17.018C2.34292 17.4142 2.50096 17.792 2.776 18.067C3.05104 18.342 3.42875 18.5 3.825 18.5H16.175C16.5712 18.5 16.9489 18.342 17.224 18.067C17.499 17.792 17.6571 17.4142 17.6571 17.018V2.98197C17.6571 2.58575 17.499 2.20804 17.224 1.93301C16.9489 1.65804 16.5712 1.5 16.175 1.5H14.925" stroke="#292B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.9926 1.5V2.98197C12.9926 3.37819 12.8345 3.75591 12.5595 4.03088C12.2845 4.30585 11.9068 4.46389 11.5106 4.46389H8.48938C8.09316 4.46389 7.71544 4.30585 7.44047 4.03088C7.1655 3.75591 7.00746 3.37819 7.00746 2.98197V1.5" stroke="#292B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="action-btn account-btn">
+                        My Account <span class="arrow">&#9662;</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 10C12.3012 10 14.1667 8.13452 14.1667 5.83333C14.1667 3.53214 12.3012 1.66667 10 1.66667C7.69881 1.66667 5.83333 3.53214 5.83333 5.83333C5.83333 8.13452 7.69881 10 10 10ZM10 10C5.85786 10 2.5 11.5559 2.5 14.1667V18.3333H17.5V14.1667C17.5 11.5559 14.1421 10 10 10Z" stroke="#292B2E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="signup.html">Sign Up</a></li>
+                    </ul>
+                </div>
+            </div>
+            <button class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="course-page-container">
+        <header class="page-header">
+            <h1>Coursiva Courses</h1>
+            <p>For All Standards</p>
+        </header>
+
+        <section class="controls-section">
+            <div class="filter-tabs">
+                <button class="filter-btn" data-category="all">All Courses</button>
+                <button class="filter-btn" data-category="kindergarten">Kindergarten</button>
+                <button class="filter-btn active" data-category="highschool">High School</button>
+                <button class="filter-btn" data-category="college">College</button>
+                <button class="filter-btn" data-category="computer">Computer</button>
+                <button class="filter-btn" data-category="science">Science</button>
+                <button class="filter-btn" data-category="engineering">Engineering</button>
+                <button class="filter-btn">More Courses</button>
+            </div>
+        </section>
+
+        <section id="standard-classes-section" class="standard-classes-section">
+            <h2 class="section-title">Standard Classes</h2>
+            <div id="standard-classes-grid" class="standard-classes-grid"></div>
+        </section>
+
+        <section id="all-courses-section" class="all-courses-section">
+             <div class="courses-header">
+                <h2 id="all-courses-title" class="section-title">All Available Courses</h2>
+                <div class="courses-actions">
+                     <div class="search-wrapper">
+                         <div class="search-container">
+                             <input type="text" id="searchInput" placeholder="Search Class, Course..." autocomplete="off">
+                             <button id="searchBtn">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.16667 15.8333C12.8486 15.8333 15.8333 12.8486 15.8333 9.16667C15.8333 5.48477 12.8486 2.5 9.16667 2.5C5.48477 2.5 2.5 5.48477 2.5 9.16667C2.5 12.8486 5.48477 15.8333 9.16667 15.8333Z" stroke="#6C6C6C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 17.5L14.5833 14.5833" stroke="#6C6C6C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                             </button>
+                         </div>
+                         <div id="search-suggestions" class="search-suggestions"></div>
+                    </div>
+                     <div class="sort-container">
+                        <label for="sort-select">Sort by:</label>
+                        <select id="sort-select">
+                            <option value="latest">Latest</option>
+                            <option value="popular">Popular</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="course-grid" class="course-grid"></div>
+        </section>
+
+        <div id="no-results" class="no-results-message" style="display: none;">
+            <h2>No Courses Found</h2>
+            <p>We couldn't find any courses matching your search or filter.</p>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="subscribe-section">
+            <div class="subscribe-container">
+                <div class="subscribe-content">
+                    <h2>Subscribe For Get Update<br>Every New Courses</h2>
+                    <p>20K+ students daily learn with Coursiva. Subscribe for new courses.</p>
+                    <form class="subscribe-form">
+                        <input type="email" placeholder="enter your email" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-main">
+            <div class="footer-container">
+                <div class="footer-col about-col">
+                    <img src="./photo/e-learning.png" alt="Coursiva Logo" class="footer-logo">
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <p class="copyright">&copy;2026 Coursiva.io</p>
+                    <p class="trademark">Coursiva is a registered trademark of Coursiva.io</p>
+                </div>
+                <div class="footer-col links-col">
+                    <h3>Courses</h3>
+                    <ul>
+                        <li><a href="#">Classroom courses</a></li>
+                        <li><a href="#">Virtual classroom courses</a></li>
+                        <li><a href="#">E-learning courses</a></li>
+                        <li><a href="#">Video Courses</a></li>
+                        <li><a href="#">Offline Courses</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col links-col">
+                    <h3>Community</h3>
+                    <ul>
+                        <li><a href="#">Learners</a></li>
+                        <li><a href="#">Partners</a></li>
+                        <li><a href="#">Developers</a></li>
+                        <li><a href="#">Transactions</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Teaching Center</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col links-col">
+                    <h3>Quick links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Professional Education</a></li>
+                        <li><a href="#">Courses</a></li>
+                        <li><a href="#">Admissions</a></li>
+                        <li><a href="#">Testimonial</a></li>
+                        <li><a href="#">Programs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col links-col">
+                    <h3>More</h3>
+                    <ul>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Investors</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="JS/nav_foot.js"></script>
+    <script src="JS/courses.js"></script>
+</body>
+</html>
