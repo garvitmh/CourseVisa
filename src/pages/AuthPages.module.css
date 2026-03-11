@@ -1,0 +1,26 @@
+.authPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.authPage > div {
+  width: 100%;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .authPage {
+    background: linear-gradient(135deg, #1a237e 0%, #37474f 100%);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .authPage {
+    padding: 1rem;
+  }
+}
