@@ -18,7 +18,6 @@ export interface StaggeredMenuProps {
   displaySocials?: boolean;
   displayItemNumbering?: boolean;
   className?: string;
-  className?: string;
   menuButtonColor?: string;
   openMenuButtonColor?: string;
   accentColor?: string;
@@ -36,7 +35,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   socialItems = [],
   displaySocials = true,
   displayItemNumbering = true,
-  className,
   className,
   menuButtonColor = '#000',
   openMenuButtonColor = '#000',
