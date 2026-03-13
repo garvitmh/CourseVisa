@@ -1,5 +1,6 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { Menu, X } from 'lucide-react';
 
 export interface StaggeredMenuItem {
   label: string;
@@ -52,13 +53,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const preLayersRef = useRef<HTMLDivElement | null>(null);
   const preLayerElsRef = useRef<HTMLElement[]>([]);
 
-  const plusHRef = useRef<HTMLSpanElement | null>(null);
-  const plusVRef = useRef<HTMLSpanElement | null>(null);
-  const iconRef = useRef<HTMLSpanElement | null>(null);
-
   const openTlRef = useRef<gsap.core.Timeline | null>(null);
   const closeTweenRef = useRef<gsap.core.Tween | null>(null);
-  const spinTweenRef = useRef<gsap.core.Timeline | null>(null);
   const colorTweenRef = useRef<gsap.core.Tween | null>(null);
 
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -71,10 +67,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       const panel = panelRef.current;
       const preContainer = preLayersRef.current;
 
-      const plusH = plusHRef.current;
-      const plusV = plusVRef.current;
-      const icon = iconRef.current;
-      if (!panel || !plusH || !plusV || !icon) return;
+      if (!panel) return;
 
       let preLayers: HTMLElement[] = [];
       if (preContainer) {
@@ -84,10 +77,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
       const offscreen = position === 'left' ? -100 : 100;
       gsap.set([panel, ...preLayers], { xPercent: offscreen });
-
-      gsap.set(plusH, { transformOrigin: '50% 50%', y: -4, rotate: 0 });
-      gsap.set(plusV, { transformOrigin: '50% 50%', y: 4, rotate: 0 });
-      gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%' });
 
       if (toggleBtnRef.current) gsap.set(toggleBtnRef.current, { color: menuButtonColor });
     });
@@ -235,29 +224,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     });
   }, [position]);
 
-  const animateIcon = useCallback((opening: boolean) => {
-    const icon = iconRef.current;
-    const h = plusHRef.current;
-    const v = plusVRef.current;
-    if (!icon || !h || !v) return;
-
-    spinTweenRef.current?.kill();
-
-    if (opening) {
-      gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%' });
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: 'power4.out' } })
-        .to(h, { y: 0, rotate: 45, duration: 0.5 }, 0)
-        .to(v, { y: 0, rotate: -45, duration: 0.5 }, 0);
-    } else {
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: 'power3.inOut' } })
-        .to(h, { y: -4, rotate: 0, duration: 0.35 }, 0)
-        .to(v, { y: 4, rotate: 0, duration: 0.35 }, 0)
-        .to(icon, { rotate: 0, duration: 0.001 }, 0);
-    }
-  }, []);
-
   const animateColor = useCallback(
     (opening: boolean) => {
       const btn = toggleBtnRef.current;
@@ -280,8 +246,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }
   }, [menuButtonColor, openMenuButtonColor]);
 
-
-
   const toggleMenu = useCallback(() => {
     const target = !openRef.current;
     openRef.current = target;
@@ -294,10 +258,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       onMenuClose?.();
       playClose();
     }
-
-    animateIcon(target);
     animateColor(target);
-  }, [playOpen, playClose, animateIcon, animateColor, onMenuOpen, onMenuClose]);
+  }, [playOpen, playClose, animateColor, onMenuOpen, onMenuClose]);
 
   const closeMenu = useCallback(() => {
     if (openRef.current) {
@@ -305,10 +267,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       setOpen(false);
       onMenuClose?.();
       playClose();
-      animateIcon(false);
       animateColor(false);
     }
-  }, [playClose, animateIcon, animateColor, onMenuClose]);
+  }, [playClose, animateColor, onMenuClose]);
 
   React.useEffect(() => {
     if (!closeOnClickAway || !open) return;
@@ -377,22 +338,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           onClick={toggleMenu}
           type="button"
         >
-
-
-          <span
-            ref={iconRef}
-            className="sm-icon relative w-[14px] h-[14px] shrink-0 inline-flex items-center justify-center [will-change:transform]"
-            aria-hidden="true"
-          >
-            <span
-              ref={plusHRef}
-              className="sm-icon-line absolute left-1/2 top-1/2 w-full h-[2.5px] bg-current rounded-[2px] -translate-x-1/2 -translate-y-1/2 [will-change:transform]"
-            />
-            <span
-              ref={plusVRef}
-              className="sm-icon-line sm-icon-line-v absolute left-1/2 top-1/2 w-full h-[2.5px] bg-current rounded-[2px] -translate-x-1/2 -translate-y-1/2 [will-change:transform]"
-            />
-          </span>
+          {open ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
 
         <aside
@@ -471,13 +421,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       </div>
 
       <style>{`
-.sm-scope .staggered-menu-wrapper { position: relative; width: 100%; height: 100%; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+.sm-scope .staggered-menu-wrapper { position: relative; width: 100%; height: 100%; pointer-events: none; }
 .sm-scope .sm-logo { display: none; }
 .sm-scope .sm-toggle { position: relative; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; cursor: pointer; font-weight: 500; line-height: 1; overflow: visible; }
 .sm-scope .sm-toggle:focus-visible { outline: 2px solid oklch(var(--p)); outline-offset: 4px; border-radius: 4px; }
-.sm-scope .sm-icon { position: relative; width: 14px; height: 14px; flex: 0 0 14px; display: inline-flex; align-items: center; justify-content: center; will-change: transform; }
 .sm-scope .sm-panel-itemWrap { position: relative; overflow: hidden; line-height: 1; }
-.sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
 .sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(260px, 100vw, 100%); height: 100%; z-index: 10; }
 .sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
 .sm-scope .sm-prelayers { position: absolute; top: 0; right: 0; bottom: 0; width: 100%; pointer-events: none; z-index: 5; }
