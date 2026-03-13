@@ -409,10 +409,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           })()}
         </div>
 
-        {/* The Toggle Button (Trigger) - Only this should be pointer-events-auto when closed */}
+        {/* The Toggle Button (Trigger) */}
         <button
           ref={toggleBtnRef}
-          className={`sm-toggle pointer-events-auto absolute top-4 left-4 inline-flex items-center gap-[0.3rem] bg-transparent border-0 cursor-pointer font-bold leading-none overflow-visible z-[102] transition-colors duration-300 ${
+          className={`sm-toggle pointer-events-auto absolute top-4 right-4 inline-flex items-center justify-center w-10 h-10 bg-transparent border-0 cursor-pointer font-bold leading-none overflow-visible z-[102] transition-colors duration-300 ${
             open ? 'text-black' : 'text-base-content'
           }`}
           aria-label={open ? 'Close menu' : 'Open menu'}
@@ -421,18 +421,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           onClick={toggleMenu}
           type="button"
         >
-          <span
-            className="sm-toggle-textWrap relative inline-block h-[1em] overflow-hidden whitespace-nowrap w-[var(--sm-toggle-width,auto)] min-w-[var(--sm-toggle-width,auto)] uppercase tracking-tighter"
-            aria-hidden="true"
-          >
-            <span ref={textInnerRef} className="sm-toggle-textInner flex flex-col leading-none">
-              {textLines.map((l, i) => (
-                <span className="sm-toggle-line block h-[1em] leading-none" key={i}>
-                  {l}
-                </span>
-              ))}
-            </span>
-          </span>
+
 
           <span
             ref={iconRef}
@@ -528,7 +517,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       <style>{`
 .sm-scope .staggered-menu-wrapper { position: relative; width: 100%; height: 100%; pointer-events: none; }
 .sm-scope .sm-logo { display: none; }
-.sm-scope .sm-toggle { position: absolute; top: 1.25rem; left: 1rem; display: inline-flex; align-items: center; gap: 0.3rem; background: transparent; border: none; cursor: pointer; font-weight: 500; line-height: 1; overflow: visible; }
+.sm-scope .sm-toggle { position: absolute; top: 1.25rem; right: 1rem; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; cursor: pointer; font-weight: 500; line-height: 1; overflow: visible; }
 .sm-scope .sm-toggle:focus-visible { outline: 2px solid oklch(var(--p)); outline-offset: 4px; border-radius: 4px; }
 .sm-scope .sm-toggle-textWrap { position: relative; margin-right: 0.5em; display: inline-block; height: 1em; overflow: hidden; white-space: nowrap; width: var(--sm-toggle-width, auto); min-width: var(--sm-toggle-width, auto); }
 .sm-scope .sm-toggle-textInner { display: flex; flex-direction: column; line-height: 1; }

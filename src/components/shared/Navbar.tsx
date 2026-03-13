@@ -36,16 +36,7 @@ export default function Navbar() {
   return (
     <div className="navbar bg-base-100/80 backdrop-blur-md shadow-sm border-b border-base-200 sticky top-0 z-[100] px-4 lg:px-8">
       <div className="navbar-start gap-4">
-        <div className="lg:hidden relative w-10 h-10">
-          <StaggeredMenu 
-            isFixed={true} 
-            items={menuItems} 
-            socialItems={socialItems}
-            accentColor="oklch(var(--p))"
-            colors={['oklch(var(--b2))', 'oklch(var(--b1))']}
-          />
-        </div>
-        <Link to="/" className="btn btn-ghost text-xl font-bold flex gap-2 items-center z-50 ml-8 lg:ml-0">
+        <Link to="/" className="btn btn-ghost text-xl font-bold flex gap-2 items-center z-50">
           <img src="/photo/e-learning.png" alt="Logo" className="h-8" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
           <span className="hidden sm:inline">Coursiva</span>
         </Link>
@@ -104,6 +95,17 @@ export default function Navbar() {
             </span>
           )}
         </Link>
+
+        {/* Mobile Menu */}
+        <div className="lg:hidden relative w-10 h-10">
+          <StaggeredMenu 
+            isFixed={true} 
+            items={menuItems} 
+            socialItems={socialItems}
+            accentColor="oklch(var(--p))"
+            colors={['oklch(var(--b2))', 'oklch(var(--b1))']}
+          />
+        </div>
 
         {/* Account */}
         <div className="dropdown dropdown-end">
