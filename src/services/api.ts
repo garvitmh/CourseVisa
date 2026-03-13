@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL || '/api/v1';
+const API_URL = import.meta.env.VITE_API_URL 
+  ? (import.meta.env.VITE_API_URL.endsWith('/api/v1') ? import.meta.env.VITE_API_URL : `${import.meta.env.VITE_API_URL}/api/v1`)
+  : '/api/v1';
 
 export const api = {
   auth: {
