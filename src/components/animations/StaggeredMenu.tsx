@@ -85,8 +85,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       const offscreen = position === 'left' ? -100 : 100;
       gsap.set([panel, ...preLayers], { xPercent: offscreen });
 
-      gsap.set(plusH, { transformOrigin: '50% 50%', rotate: 0 });
-      gsap.set(plusV, { transformOrigin: '50% 50%', rotate: 90 });
+      gsap.set(plusH, { transformOrigin: '50% 50%', y: -4, rotate: 0 });
+      gsap.set(plusV, { transformOrigin: '50% 50%', y: 4, rotate: 0 });
       gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%' });
 
       if (toggleBtnRef.current) gsap.set(toggleBtnRef.current, { color: menuButtonColor });
@@ -247,13 +247,13 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%' });
       spinTweenRef.current = gsap
         .timeline({ defaults: { ease: 'power4.out' } })
-        .to(h, { rotate: 45, duration: 0.5 }, 0)
-        .to(v, { rotate: -45, duration: 0.5 }, 0);
+        .to(h, { y: 0, rotate: 45, duration: 0.5 }, 0)
+        .to(v, { y: 0, rotate: -45, duration: 0.5 }, 0);
     } else {
       spinTweenRef.current = gsap
         .timeline({ defaults: { ease: 'power3.inOut' } })
-        .to(h, { rotate: 0, duration: 0.35 }, 0)
-        .to(v, { rotate: 90, duration: 0.35 }, 0)
+        .to(h, { y: -4, rotate: 0, duration: 0.35 }, 0)
+        .to(v, { y: 4, rotate: 0, duration: 0.35 }, 0)
         .to(icon, { rotate: 0, duration: 0.001 }, 0);
     }
   }, []);
@@ -275,14 +275,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   React.useEffect(() => {
     if (toggleBtnRef.current) {
-      if (changeMenuColorOnOpen) {
-        const targetColor = openRef.current ? openMenuButtonColor : menuButtonColor;
-        gsap.set(toggleBtnRef.current, { color: targetColor });
-      } else {
-        gsap.set(toggleBtnRef.current, { color: menuButtonColor });
-      }
+      const targetColor = openRef.current ? (openMenuButtonColor !== '#000' ? openMenuButtonColor : 'oklch(var(--bc))') : (menuButtonColor !== '#000' ? menuButtonColor : 'oklch(var(--bc))');
+      gsap.set(toggleBtnRef.current, { color: targetColor });
     }
-  }, [changeMenuColorOnOpen, menuButtonColor, openMenuButtonColor]);
+  }, [menuButtonColor, openMenuButtonColor]);
 
 
 
@@ -372,8 +368,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         {/* The Toggle Button (Trigger) */}
         <button
           ref={toggleBtnRef}
-          className={`sm-toggle pointer-events-auto absolute top-4 right-4 inline-flex items-center justify-center w-10 h-10 bg-transparent border-0 cursor-pointer font-bold leading-none overflow-visible z-[102] transition-colors duration-300 ${
-            open ? 'text-black' : 'text-base-content'
+          className={`sm-toggle pointer-events-auto relative inline-flex items-center justify-center w-10 h-10 bg-transparent border-0 cursor-pointer font-bold leading-none overflow-visible z-[102] transition-colors duration-300 ${
+            open ? 'text-base-content' : 'text-base-content'
           }`}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
@@ -475,9 +471,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       </div>
 
       <style>{`
-.sm-scope .staggered-menu-wrapper { position: relative; width: 100%; height: 100%; pointer-events: none; }
+.sm-scope .staggered-menu-wrapper { position: relative; width: 100%; height: 100%; pointer-events: none; display: flex; align-items: center; justify-content: center; }
 .sm-scope .sm-logo { display: none; }
-.sm-scope .sm-toggle { position: absolute; top: 1.25rem; right: 1rem; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; cursor: pointer; font-weight: 500; line-height: 1; overflow: visible; }
+.sm-scope .sm-toggle { position: relative; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; cursor: pointer; font-weight: 500; line-height: 1; overflow: visible; }
 .sm-scope .sm-toggle:focus-visible { outline: 2px solid oklch(var(--p)); outline-offset: 4px; border-radius: 4px; }
 .sm-scope .sm-icon { position: relative; width: 14px; height: 14px; flex: 0 0 14px; display: inline-flex; align-items: center; justify-content: center; will-change: transform; }
 .sm-scope .sm-panel-itemWrap { position: relative; overflow: hidden; line-height: 1; }

@@ -66,7 +66,7 @@ export default function Navbar() {
         {/* Theme Controller */}
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle" title="Change Theme">
-            <Palette className="w-6 h-6 text-base-content/80" />
+            <Palette className="w-5 h-5 text-base-content/80" />
           </div>
           <ul tabIndex={0} className="dropdown-content z-[1] menu p-3 shadow-xl bg-base-100/90 backdrop-blur-lg rounded-box w-56 gap-1 border border-base-200 mt-4">
             <li className="menu-title px-4 py-2 text-xs uppercase tracking-wider font-bold opacity-60">Themes</li>
@@ -88,7 +88,7 @@ export default function Navbar() {
 
         {/* Cart */}
         <Link to="/cart" className="btn btn-ghost btn-circle relative">
-          <ShoppingCart className="w-6 h-6 text-base-content/80" />
+          <ShoppingCart className="w-5 h-5 text-base-content/80" />
           {cart.totalItems > 0 && (
             <span className="badge badge-error badge-sm absolute top-0 right-0 font-bold border-2 border-base-100 shadow-sm">
               {cart.totalItems}
@@ -97,13 +97,15 @@ export default function Navbar() {
         </Link>
 
         {/* Mobile Menu */}
-        <div className="lg:hidden relative w-10 h-10">
+        <div className="lg:hidden flex items-center">
           <StaggeredMenu 
             isFixed={true} 
             items={menuItems} 
             socialItems={socialItems}
             accentColor="oklch(var(--p))"
             colors={['oklch(var(--b2))', 'oklch(var(--b1))']}
+            menuButtonColor="oklch(var(--bc))"
+            openMenuButtonColor="oklch(var(--bc))"
           />
         </div>
 
