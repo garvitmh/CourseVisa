@@ -108,8 +108,10 @@ export default function StudentDashboard() {
                    <div className="absolute top-0 right-0 p-4 opacity-10 text-accent group-hover:scale-110 transition-transform"><Clock className="w-16 h-16" /></div>
                    <CardBody className="p-6">
                      <div className="text-sm font-bold text-base-content/60 uppercase tracking-wider mb-1">Learning Hours</div>
-                     <div className="text-4xl font-black">12.5h</div>
-                     <div className="text-success text-sm font-semibold mt-2">+2.5h this week</div>
+                     <div className="text-4xl font-black">
+                        {(enrolledCourses.reduce((acc, c) => acc + (c.completedLessons || 0), 0) * 0.5).toFixed(1)}h
+                      </div>
+                      <div className="text-success text-sm font-semibold mt-2">Personal Growth Tracking</div>
                    </CardBody>
                 </Card>
               </div>
@@ -169,15 +171,15 @@ export default function StudentDashboard() {
                           <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
                           <div className="absolute top-2 right-2 bg-success text-white px-2 py-1 rounded text-xs font-bold uppercase tracking-wider shadow-md">Completed</div>
                           <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm">
-                            <Button variant="primary" className="shadow-lg">View Certificate</Button>
-                          </div>
+                             <Link to={`/courses/${course.id}`}><Button variant="primary" className="shadow-lg">View Certificate</Button></Link>
+                           </div>
                         </div>
                         <CardBody className="p-4">
                           <h3 className="font-bold text-lg mb-1 truncate" title={course.title}>{course.title}</h3>
                           <p className="text-base-content/60 text-sm">Instructor: {course.instructor}</p>
-                          <div className="mt-4 pt-4 border-t border-base-200 flex justify-between items-center">
-                            <span className="text-xs text-base-content/50 font-bold uppercase tracking-wider">Course Passed</span>
-                            <Button variant="outline" size="sm">Review Course</Button>
+                           <div className="mt-4 pt-4 border-t border-base-200 flex justify-between items-center">
+                             <span className="text-xs text-base-content/50 font-bold uppercase tracking-wider">Course Passed</span>
+                             <Link to={`/courses/${course.id}`}><Button variant="outline" size="sm">Review Course</Button></Link>
                           </div>
                         </CardBody>
                       </Card>
@@ -209,8 +211,8 @@ export default function StudentDashboard() {
                    <div className="flex flex-col gap-4 max-w-lg mx-auto">
                      {completedCourses.map(course => (
                        <div key={course.id} className="flex justify-between items-center p-4 bg-base-200 rounded-lg border border-base-300">
-                         <div className="font-bold truncate max-w-[200px]">{course.title}</div>
-                         <Button variant="primary" size="sm">Download PDF</Button>
+                          <div className="font-bold truncate max-w-[200px]">{course.title}</div>
+                          <Button variant="primary" size="sm" onClick={() => alert(`Certificate for "${course.title}" is being generated. In a production app, a real PDF would be downloaded here.`)}>Download PDF</Button>
                        </div>
                      ))}
                    </div>

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Button } from './Button'; // Assuming Button exists in shared
+import { Button } from './Button';
 import { ImagePlus } from 'lucide-react';
 
 interface CloudinaryUploadWidgetProps {
@@ -18,28 +18,31 @@ export const CloudinaryUploadWidget = ({
   className = ''
 }: CloudinaryUploadWidgetProps) => {
   const widgetRef = useRef<any>(null);
+  // Store the callback in a ref so the effect never re-fires due to a new function reference
+  const callbackRef = useRef(onUploadSuccess);
+  callbackRef.current = onUploadSuccess;
 
   useEffect(() => {
-    // Check if cloudinary is loaded globally
+    // Only initialize once — independent of the parent's state changes
     if ('cloudinary' in window) {
       const cloudinary = (window as any).cloudinary;
       widgetRef.current = cloudinary.createUploadWidget(
         {
-          cloudName: cloudName,
-          uploadPreset: uploadPreset,
-          sources: ['local', 'url', 'unsplash'], // Allowed sources
+          cloudName,
+          uploadPreset,
+          sources: ['local', 'url', 'unsplash'],
           multiple: false,
           maxFiles: 1,
         },
         (error: any, result: any) => {
           if (!error && result && result.event === 'success') {
-            console.log('Upload successful:', result.info);
-            onUploadSuccess(result.info.secure_url);
+            callbackRef.current(result.info.secure_url);
           }
         }
       );
     }
-  }, [cloudName, uploadPreset, onUploadSuccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cloudName, uploadPreset]); // ← onUploadSuccess intentionally excluded
 
   const handleOpenWidget = (e: React.MouseEvent) => {
     e.preventDefault();

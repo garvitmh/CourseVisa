@@ -5,6 +5,7 @@ const {
   getCourses,
   deleteCourse,
   getApplications,
+  updateApplicationStatus,
   getEnrollments,
   grantEnrollment,
   revokeEnrollment
@@ -37,6 +38,10 @@ router.route('/courses/:id')
 // Route: /api/v1/admin/applications
 router.route('/applications')
   .get(getApplications);
+
+// Route: /api/v1/admin/applications/:id/status
+router.route('/applications/:id/status')
+  .put(updateApplicationStatus);
 
 // Route: /api/v1/admin/enrollments
 router.route('/enrollments')

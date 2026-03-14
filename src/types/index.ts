@@ -47,6 +47,7 @@ export interface User {
   role: 'student' | 'mentor' | 'admin';
   createdAt: Date;
   avatar?: string;
+  bio?: string;
 }
 
 export interface AuthState {

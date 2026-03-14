@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Course = require('../models/Course');
-const Application = require('../models/Application'); // Assume this exists or skip
+const MentorApplication = require('../models/MentorApplication');
 const Enrollment = require('../models/Enrollment');
 
 // @desc    Get all users
@@ -59,13 +59,13 @@ exports.getCourses = async (req, res, next) => {
       select: 'username email'
     }).sort('-createdAt');
 
-    // Add mock students count for the table since we don't have enrollment model yet
-    const enrichedCourses = courses.map(course => {
+    // Get real enrollment counts for each course
+    const enrichedCourses = await Promise.all(courses.map(async course => {
       const courseObj = course.toObject();
-      courseObj.students = Math.floor(Math.random() * 2000) + 100; // Mock stat
+      courseObj.students = await Enrollment.countDocuments({ course: course._id });
       courseObj.status = 'published';
       return courseObj;
-    });
+    }));
 
     res.status(200).json({
       success: true,
@@ -99,23 +99,55 @@ exports.deleteCourse = async (req, res, next) => {
   }
 };
 
-// @desc    Get pending mentor applications (Mock)
+// @desc    Get all mentor applications (real data)
 // @route   GET /api/v1/admin/applications
 // @access  Private/Admin
 exports.getApplications = async (req, res, next) => {
   try {
-    // Since we don't have an Application model yet, return mock data
-    const MOCK_APPLICATIONS = [
-      { id: 'app_1', name: 'Dr. Sarah Chen', expertise: 'Computer Science', experience: 8, status: 'pending', date: '2023-10-24', resumeUrl: '#' },
-      { id: 'app_2', name: 'Michael Rodriguez', expertise: 'UI/UX Design', experience: 5, status: 'accepted', date: '2023-10-22', resumeUrl: '#' },
-      { id: 'app_3', name: 'James Wilson', expertise: 'Machine Learning', experience: 2, status: 'rejected', date: '2023-10-20', resumeUrl: '#' },
-      { id: 'app_4', name: 'Emma Thompson', expertise: 'Business Strategy', experience: 12, status: 'pending', date: '2023-10-25', resumeUrl: '#' },
-    ];
-    res.status(200).json({
-      success: true,
-      count: MOCK_APPLICATIONS.length,
-      data: MOCK_APPLICATIONS
-    });
+    const applications = await MentorApplication.find().sort('-createdAt');
+    // Normalize fields to match what the frontend expects
+    const data = applications.map(app => ({
+      id: app._id,
+      _id: app._id,
+      name: app.name,
+      expertise: app.expertise,
+      experience: app.experience,
+      status: app.status || 'pending',
+      date: app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '',
+      linkedinUrl: app.linkedinUrl || null,
+      email: app.email,
+      bio: app.bio,
+      qualifications: app.qualifications,
+    }));
+    res.status(200).json({ success: true, count: data.length, data });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Server Error' });
+  }
+};
+
+// @desc    Approve or reject a mentor application
+// @route   PUT /api/v1/admin/applications/:id/status
+// @access  Private/Admin
+exports.updateApplicationStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    if (!['accepted', 'rejected', 'pending'].includes(status)) {
+      return res.status(400).json({ success: false, error: 'Invalid status' });
+    }
+    const application = await MentorApplication.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true, runValidators: true }
+    );
+    if (!application) {
+      return res.status(404).json({ success: false, error: 'Application not found' });
+    }
+    // If approved, promote the user to mentor role
+    if (status === 'accepted') {
+      const user = await User.findOne({ email: application.email });
+      if (user) { user.role = 'mentor'; await user.save(); }
+    }
+    res.status(200).json({ success: true, data: application, message: `Application ${status}` });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Server Error' });
   }

@@ -5,7 +5,10 @@ const Course = require('../models/Course');
 // @access  Public
 exports.getCourses = async (req, res, next) => {
   try {
-    const courses = await Course.find();
+    const courses = await Course.find().populate({
+      path: 'instructor',
+      select: 'username email'
+    });
 
     res.status(200).json({
       success: true,

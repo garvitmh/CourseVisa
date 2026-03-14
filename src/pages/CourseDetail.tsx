@@ -140,6 +140,15 @@ export default function CourseDetail() {
                         className="w-full h-full object-contain"
                         autoPlay={!selectedVideo.isTrial}
                         poster={course.image}
+                        onEnded={async () => {
+                          if (isEnrolled) {
+                            try {
+                              await api.student.updateProgress(course._id, selectedVideo._id);
+                            } catch (err) {
+                              console.error('Failed to update progress:', err);
+                            }
+                          }
+                        }}
                       />
                     ) : (
                       <div className="flex flex-col items-center justify-center p-6 text-center z-10 w-full h-full">

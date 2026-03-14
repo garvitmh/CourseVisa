@@ -47,6 +47,56 @@ export const api = {
       if (!res.ok) throw new Error('Failed to fetch user');
       return res.json();
     },
+    updateProfile: async (data: any) => {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/auth/profile`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Update failed');
+      }
+      return res.json();
+    },
+    updatePassword: async (data: any) => {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/auth/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Password update failed');
+      }
+      return res.json();
+    },
+    forgotPassword: async (email: string) => {
+      const res = await fetch(`${API_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Request failed');
+      }
+      return res.json();
+    },
+    resetPassword: async (token: string, password: any) => {
+      const res = await fetch(`${API_URL}/auth/reset-password/${token}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Reset failed');
+      }
+      return res.json();
+    }
   },
   courses: {
     getAll: async () => {
@@ -80,6 +130,16 @@ export const api = {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Failed to fetch enrolled courses');
+      return res.json();
+    },
+    updateProgress: async (courseId: string, videoId: string) => {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/student/courses/${courseId}/progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ videoId })
+      });
+      if (!res.ok) throw new Error('Failed to update progress');
       return res.json();
     }
   },

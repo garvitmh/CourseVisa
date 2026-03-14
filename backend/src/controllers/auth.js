@@ -175,3 +175,113 @@ exports.getUsers = async (req, res, next) => {
     });
   }
 };
+
+// @desc    Update logged-in user profile (name, phone)
+// @route   PUT /api/v1/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { username, phone } = req.body;
+    const fieldsToUpdate = {};
+    if (username && username.trim()) fieldsToUpdate.username = username.trim();
+    if (phone !== undefined) fieldsToUpdate.phone = phone;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      fieldsToUpdate,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    res.status(200).json({ success: true, data: user });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+};
+
+// @desc    Update password
+// @route   PUT /api/v1/auth/password
+// @access  Private
+exports.updatePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, error: 'Please provide currentPassword and newPassword' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, error: 'New password must be at least 6 characters' });
+    }
+
+    const user = await User.findById(req.user.id).select('+password');
+    if (!user.password) {
+      return res.status(400).json({ success: false, error: 'This account uses Google login — password cannot be changed here.' });
+    }
+
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, error: 'Current password is incorrect' });
+    }
+
+    user.password = newPassword;
+    await user.save(); // triggers the bcrypt pre-save hook
+
+    res.status(200).json({ success: true, message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+};
+
+// @desc    Forgot Password
+// @route   POST /api/v1/auth/forgot-password
+// @access  Public
+exports.forgotPassword = async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return res.status(404).json({ success: false, error: 'There is no user with that email' });
+  }
+
+  // Get reset token
+  const resetToken = user.getResetPasswordToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  // In a real app, send email here. For now, we return the token for testing.
+  res.status(200).json({
+    success: true,
+    data: 'Token sent to email (Simulation)',
+    resetToken: resetToken // Returning it so frontend can use it in this demo
+  });
+};
+
+// @desc    Reset Password
+// @route   PUT /api/v1/auth/reset-password/:resettoken
+// @access  Public
+const crypto = require('crypto');
+exports.resetPassword = async (req, res, next) => {
+  // Get hashed token
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.resettoken)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return res.status(400).json({ success: false, error: 'Invalid or expired token' });
+  }
+
+  // Set new password
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Password reset successful'
+  });
+};
+

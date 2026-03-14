@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getMe, getUsers, googleLogin } = require('../controllers/auth');
+const { register, login, getMe, getUsers, googleLogin, updateProfile, updatePassword, forgotPassword, resetPassword } = require('../controllers/auth');
 
 const { check, validationResult } = require('express-validator');
 
@@ -30,5 +30,9 @@ router.post('/login', [
 router.get('/me', protect, getMe);
 router.get('/users', protect, authorize('admin'), getUsers);
 router.post('/google', googleLogin);
+router.put('/profile', protect, updateProfile);
+router.put('/password', protect, updatePassword);
+router.post('/forgot-password', forgotPassword);
+router.put('/reset-password/:resettoken', resetPassword);
 
 module.exports = router;
