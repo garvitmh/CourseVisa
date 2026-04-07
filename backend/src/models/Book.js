@@ -20,7 +20,7 @@ const bookSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: 'no-photo.jpg'
+    default: ''
   },
   category: {
     type: String,

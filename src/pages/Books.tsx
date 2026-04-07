@@ -156,7 +156,7 @@ export default function Books() {
                     {/* Book Cover */}
                     <div className="h-72 bg-base-200 relative flex flex-col items-center justify-center p-6 overflow-hidden">
                       <div className="absolute inset-0 bg-base-content opacity-5 mix-blend-overlay"></div>
-                      {book.image ? (
+                      {book.image && book.image !== 'no-photo.jpg' ? (
                         <img 
                           src={book.image} 
                           alt={book.title} 

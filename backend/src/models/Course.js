@@ -31,7 +31,7 @@ const courseSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: 'no-photo.jpg'
+    default: ''
   },
   instructor: {
     type: mongoose.Schema.ObjectId,

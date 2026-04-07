@@ -301,8 +301,6 @@ export default function ProfileSettings() {
                       </div>
                       <div>
                         <CloudinaryUploadWidget
-                          cloudName="dgkzstbui"
-                          uploadPreset="e-learning"
                           buttonText="Upload Profile Picture"
                           onUploadSuccess={handleAvatarUpload}
                         />

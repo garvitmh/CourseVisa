@@ -4,8 +4,8 @@ import { ImagePlus, Video } from 'lucide-react';
 
 interface CloudinaryUploadWidgetProps {
   onUploadSuccess: (url: string) => void;
-  cloudName: string;
-  uploadPreset: string;
+  cloudName?: string;
+  uploadPreset?: string;
   buttonText?: string;
   className?: string;
   resourceType?: 'image' | 'video' | 'auto';
@@ -14,8 +14,8 @@ interface CloudinaryUploadWidgetProps {
 
 export const CloudinaryUploadWidget = ({
   onUploadSuccess,
-  cloudName,
-  uploadPreset,
+  cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dgkzstbui',
+  uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'e-learning',
   buttonText = 'Upload Image',
   className = '',
   resourceType = 'image',

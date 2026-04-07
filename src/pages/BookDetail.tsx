@@ -107,7 +107,7 @@ export default function BookDetail() {
               <div 
                 className="w-72 h-[420px] rounded-r-2xl rounded-l-md shadow-2xl flex flex-col items-center justify-center text-center p-8 relative overflow-hidden bg-base-300 border-l-[12px] border-primary/80 group-hover:-translate-y-2 transition-transform duration-500"
               >
-                {book.image ? (
+                {book.image && book.image !== 'no-photo.jpg' ? (
                   <img 
                     src={book.image} 
                     alt={book.title} 

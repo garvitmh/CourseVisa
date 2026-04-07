@@ -523,8 +523,8 @@ export default function MentorDashboard() {
                          <div className="flex-1">
                            <p className="text-sm text-base-content/60 mb-4">Upload a high-quality 16:9 thumbnail to attract more students.</p>
                            <CloudinaryUploadWidget
-                             cloudName="dgkzstbui"
-                             uploadPreset="e-learning"
+                             
+                             
                              onUploadSuccess={handleImageUpload}
                            />
                            {newCourse.image && (
@@ -628,8 +628,8 @@ export default function MentorDashboard() {
                               <div className="flex flex-col gap-2">
                                 <label className="font-semibold text-base-content">Thumbnail</label>
                                 <CloudinaryUploadWidget
-                                  cloudName="dgkzstbui"
-                                  uploadPreset="e-learning"
+                                  
+                                  
                                   onUploadSuccess={handleEditingCourseImageUpload}
                                   buttonText="Upload Thumbnail"
                                 />
@@ -691,8 +691,6 @@ export default function MentorDashboard() {
                                 />
                                 <div className="flex flex-wrap items-center gap-3">
                                   <CloudinaryUploadWidget
-                                    cloudName="dgkzstbui"
-                                    uploadPreset="e-learning"
                                     resourceType="video"
                                     onUploadSuccess={handleVideoUpload}
                                     buttonText="Upload Video"
