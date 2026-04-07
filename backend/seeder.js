@@ -78,7 +78,7 @@ const mockCourses = [
     category: 'kindergarten',
     price: 499,
     rating: 5.0,
-    image: 'https://image.pollinations.ai/prompt/kindergarten%20phonics%20colorful%20letters?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1514059431411-cfac4e3346d0?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Welcome to Phonics!', videoUrl: '', duration: '8:00' },
       { title: 'The Letter A and B', videoUrl: '', duration: '10:30' },
@@ -92,7 +92,7 @@ const mockCourses = [
     category: 'kindergarten',
     price: 399,
     rating: 4.9,
-    image: 'https://image.pollinations.ai/prompt/kindergarten%20math%20numbers%20toys?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Counting 1 to 10', videoUrl: '', duration: '9:00' },
       { title: 'Counting 11 to 20', videoUrl: '', duration: '9:30' },
@@ -105,7 +105,7 @@ const mockCourses = [
     category: 'kindergarten',
     price: 299,
     rating: 4.8,
-    image: 'https://image.pollinations.ai/prompt/kids%20painting%20art%20supplies?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Drawing Shapes', videoUrl: '', duration: '11:00' },
       { title: 'Finger Painting Fun', videoUrl: '', duration: '13:00' },
@@ -120,7 +120,7 @@ const mockCourses = [
     category: 'highschool',
     price: 799,
     rating: 4.7,
-    image: 'https://image.pollinations.ai/prompt/mathematics%20algebra%20equation%20blackboard?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1632516643720-e7f5d7d6eca4?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Introduction to Variables', videoUrl: '', duration: '15:00' },
       { title: 'Linear Equations', videoUrl: '', duration: '18:30' },
@@ -134,7 +134,7 @@ const mockCourses = [
     category: 'highschool',
     price: 699,
     rating: 4.6,
-    image: 'https://image.pollinations.ai/prompt/ancient%20history%20world%20globe?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1447069387593-a5de0862481e?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Ancient Civilizations', videoUrl: '', duration: '22:00' },
       { title: 'Rise of Empires', videoUrl: '', duration: '19:00' },
@@ -147,7 +147,7 @@ const mockCourses = [
     category: 'highschool',
     price: 749,
     rating: 4.8,
-    image: 'https://image.pollinations.ai/prompt/classic%20literature%20books%20library?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Introduction to Literary Analysis', videoUrl: '', duration: '16:00' },
       { title: 'Shakespeare: Romeo & Juliet', videoUrl: '', duration: '25:00' },
@@ -160,7 +160,7 @@ const mockCourses = [
     category: 'highschool',
     price: 899,
     rating: 4.7,
-    image: 'https://image.pollinations.ai/prompt/physics%20experiments%20pendulum?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Forces and Motion', videoUrl: '', duration: '20:00' },
       { title: 'Energy and Work', videoUrl: '', duration: '18:00' },
@@ -175,7 +175,7 @@ const mockCourses = [
     category: 'college',
     price: 1299,
     rating: 4.5,
-    image: 'https://image.pollinations.ai/prompt/advanced%20calculus%20integral%20math?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Limits and Continuity', videoUrl: '', duration: '25:00' },
       { title: 'Derivatives Defined', videoUrl: '', duration: '30:00' },
@@ -189,7 +189,7 @@ const mockCourses = [
     category: 'college',
     price: 999,
     rating: 4.6,
-    image: 'https://image.pollinations.ai/prompt/microeconomics%20finance%20chart?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Supply and Demand', videoUrl: '', duration: '22:00' },
       { title: 'Market Structures', videoUrl: '', duration: '20:00' },
@@ -202,7 +202,7 @@ const mockCourses = [
     category: 'college',
     price: 1099,
     rating: 4.9,
-    image: 'https://image.pollinations.ai/prompt/human%20brain%20psychology%20mind?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'History of Psychology', videoUrl: '', duration: '20:00' },
       { title: 'Brain and Behavior', videoUrl: '', duration: '24:00' },
@@ -215,7 +215,7 @@ const mockCourses = [
     category: 'college',
     price: 1499,
     rating: 4.4,
-    image: 'https://image.pollinations.ai/prompt/organic%20chemistry%20molecules%20laboratory?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Introduction to Functional Groups', videoUrl: '', duration: '28:00' },
       { title: 'Alkanes and Alkenes', videoUrl: '', duration: '30:00' },
@@ -230,7 +230,7 @@ const mockCourses = [
     category: 'computer',
     price: 1299,
     rating: 4.9,
-    image: 'https://image.pollinations.ai/prompt/python%20programming%20code%20screen?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bfce8?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Getting Started with Python', videoUrl: '', duration: '18:00' },
       { title: 'Variables and Data Types', videoUrl: '', duration: '22:00' },
@@ -244,7 +244,7 @@ const mockCourses = [
     category: 'computer',
     price: 1999,
     rating: 4.9,
-    image: 'https://image.pollinations.ai/prompt/react%20nodejs%20web%20development%20code?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'React Fundamentals', videoUrl: '', duration: '30:00' },
       { title: 'Building RESTful APIs', videoUrl: '', duration: '35:00' },
@@ -258,7 +258,7 @@ const mockCourses = [
     category: 'computer',
     price: 1799,
     rating: 4.9,
-    image: 'https://image.pollinations.ai/prompt/data%20structures%20algorithms%20binary%20tree?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Arrays and Strings', videoUrl: '', duration: '25:00' },
       { title: 'Linked Lists', videoUrl: '', duration: '28:00' },
@@ -272,7 +272,7 @@ const mockCourses = [
     category: 'computer',
     price: 999,
     rating: 4.7,
-    image: 'https://image.pollinations.ai/prompt/modern%20web%20design%20ui%20ux?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'HTML Fundamentals', videoUrl: '', duration: '20:00' },
       { title: 'CSS Flexbox', videoUrl: '', duration: '22:00' },
@@ -288,7 +288,7 @@ const mockCourses = [
     category: 'science',
     price: 1199,
     rating: 4.8,
-    image: 'https://image.pollinations.ai/prompt/astrophysics%20galaxy%20universe%20stars?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'The Scale of the Universe', videoUrl: '', duration: '25:00' },
       { title: 'Stars and Their Life Cycles', videoUrl: '', duration: '28:00' },
@@ -301,7 +301,7 @@ const mockCourses = [
     category: 'science',
     price: 1099,
     rating: 4.6,
-    image: 'https://image.pollinations.ai/prompt/human%20anatomy%20biology%20dna?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Introduction to Human Anatomy', videoUrl: '', duration: '22:00' },
       { title: 'The Nervous System', videoUrl: '', duration: '26:00' },
@@ -314,7 +314,7 @@ const mockCourses = [
     category: 'science',
     price: 799,
     rating: 4.7,
-    image: 'https://image.pollinations.ai/prompt/environmental%20science%20nature%20earth?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Ecosystems Explained', videoUrl: '', duration: '20:00' },
       { title: 'Climate Change Fundamentals', videoUrl: '', duration: '24:00' },
@@ -329,7 +329,7 @@ const mockCourses = [
     category: 'engineering',
     price: 1499,
     rating: 4.5,
-    image: 'https://image.pollinations.ai/prompt/mechanical%20engineering%20gears%20machinery?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1563284050-42211516e864?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Introduction to Thermodynamics', videoUrl: '', duration: '28:00' },
       { title: 'Fluid Mechanics Basics', videoUrl: '', duration: '25:00' },
@@ -342,7 +342,7 @@ const mockCourses = [
     category: 'engineering',
     price: 1299,
     rating: 4.8,
-    image: 'https://image.pollinations.ai/prompt/electrical%20circuit%20board%20electronics?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1517077304055-6e89abf0ceb6?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: "Ohm's Law & Resistors", videoUrl: '', duration: '20:00' },
       { title: "Kirchhoff's Laws", videoUrl: '', duration: '22:00' },
@@ -356,7 +356,7 @@ const mockCourses = [
     category: 'engineering',
     price: 1199,
     rating: 4.6,
-    image: 'https://image.pollinations.ai/prompt/structural%20engineering%20bridge%20blueprint?width=400&height=220&nologo=true',
+    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=400&q=80',
     videos: [
       { title: 'Types of Loads', videoUrl: '', duration: '18:00' },
       { title: 'Beam Analysis', videoUrl: '', duration: '22:00' },
