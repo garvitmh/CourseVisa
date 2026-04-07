@@ -59,14 +59,14 @@ const mockMentorApplications = [
 ];
 
 const mockBooks = [
-  { title: 'The Pragmatic Programmer', author: 'Andy Hunt', description: 'Your journey to mastery. Covers best practices, tips, and tricks for building robust software across all domains.', price: 599, category: 'programming', stock: 15 },
-  { title: 'Clean Architecture', author: 'Robert C. Martin', description: 'A craftsman\'s guide to software structure and design. Learn how to build maintainable and scalable systems.', price: 649, category: 'programming', stock: 8 },
-  { title: 'Designing Data-Intensive Applications', author: 'Martin Kleppmann', description: 'The big ideas behind reliable, scalable, and maintainable systems. A must-read for backend engineers.', price: 799, category: 'programming', stock: 12 },
-  { title: 'To Mock a Mockingbird', author: 'Raymond Smullyan', description: 'An entertaining collection of logical puzzles that introduce combinatory logic in an accessible way.', price: 299, category: 'math', stock: 20 },
-  { title: 'Deep Learning', author: 'Ian Goodfellow', description: 'A comprehensive guide to building AI systems. Covers neural networks, optimization, and practical applications.', price: 899, category: 'science', stock: 5 },
-  { title: 'JavaScript: The Good Parts', author: 'Douglas Crockford', description: 'Unearths the best features of JavaScript that make it an outstanding object-oriented programming language.', price: 399, category: 'programming', stock: 25 },
-  { title: 'The Lean Startup', author: 'Eric Ries', description: 'How constant innovation and validated learning creates radically successful businesses with less waste.', price: 349, category: 'business', stock: 30 },
-  { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', description: 'Explores the two systems of thought that drive the way we think and make choices. A Nobel Prize winner\'s masterpiece.', price: 329, category: 'business', stock: 40 }
+  { title: 'The Pragmatic Programmer', author: 'Andy Hunt', description: 'Your journey to mastery. Covers best practices, tips, and tricks for building robust software across all domains.', price: 599, category: 'programming', stock: 15, image: 'https://m.media-amazon.com/images/I/51W1sBPO7tL._SL1000_.jpg' },
+  { title: 'Clean Architecture', author: 'Robert C. Martin', description: 'A craftsman\'s guide to software structure and design. Learn how to build maintainable and scalable systems.', price: 649, category: 'programming', stock: 8, image: 'https://m.media-amazon.com/images/I/61rJRcc00AL._SL1000_.jpg' },
+  { title: 'Designing Data-Intensive Applications', author: 'Martin Kleppmann', description: 'The big ideas behind reliable, scalable, and maintainable systems. A must-read for backend engineers.', price: 799, category: 'programming', stock: 12, image: 'https://m.media-amazon.com/images/I/81q2A3PyyDL._SL1000_.jpg' },
+  { title: 'To Mock a Mockingbird', author: 'Raymond Smullyan', description: 'An entertaining collection of logical puzzles that introduce combinatory logic in an accessible way.', price: 299, category: 'math', stock: 20, image: 'https://m.media-amazon.com/images/I/71Xm+Q6bZOL._SL1088_.jpg' },
+  { title: 'Deep Learning', author: 'Ian Goodfellow', description: 'A comprehensive guide to building AI systems. Covers neural networks, optimization, and practical applications.', price: 899, category: 'science', stock: 5, image: 'https://m.media-amazon.com/images/I/61qbgXIxV-L._SL1500_.jpg' },
+  { title: 'JavaScript: The Good Parts', author: 'Douglas Crockford', description: 'Unearths the best features of JavaScript that make it an outstanding object-oriented programming language.', price: 399, category: 'programming', stock: 25, image: 'https://m.media-amazon.com/images/I/81kqrwS1nNL._SL1500_.jpg' },
+  { title: 'The Lean Startup', author: 'Eric Ries', description: 'How constant innovation and validated learning creates radically successful businesses with less waste.', price: 349, category: 'business', stock: 30, image: 'https://m.media-amazon.com/images/I/81-QB7nDh4L._SL1500_.jpg' },
+  { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', description: 'Explores the two systems of thought that drive the way we think and make choices. A Nobel Prize winner\'s masterpiece.', price: 329, category: 'business', stock: 40, image: 'https://m.media-amazon.com/images/I/71R1YFwM+pL._SL1500_.jpg' }
 ];
 
 const mockCourses = [
