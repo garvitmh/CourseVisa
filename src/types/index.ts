@@ -8,7 +8,7 @@ export interface Subject {
 }
 
 export interface Course {
-  id: number;
+  id: string;
   subjectId: string;
   category: CategoryType;
   title: string;
@@ -45,6 +45,7 @@ export interface User {
   email: string;
   phone: string;
   role: 'student' | 'mentor' | 'admin';
+  status?: 'active' | 'suspended';
   createdAt: Date;
   avatar?: string;
   bio?: string;
@@ -74,7 +75,7 @@ export interface LoginFormData {
 
 /* Cart Types */
 export interface CartItem {
-  courseId: number;
+  courseId: string;
   course: Course;
   quantity: number;
   addedAt: Date;
@@ -89,10 +90,10 @@ export interface Cart {
 export interface CartContextType {
   cart: Cart;
   addToCart: (course: Course) => void;
-  removeFromCart: (courseId: number) => void;
-  updateQuantity: (courseId: number, quantity: number) => void;
+  removeFromCart: (courseId: string) => void;
+  updateQuantity: (courseId: string, quantity: number) => void;
   clearCart: () => void;
-  isInCart: (courseId: number) => boolean;
+  isInCart: (courseId: string) => boolean;
 }
 
 /* Form Validation Types */
@@ -129,7 +130,7 @@ export interface FilterState {
 }
 
 export interface SearchSuggestion {
-  courseId: number;
+  courseId: string;
   courseTitle: string;
   matchField: 'title' | 'description';
 }

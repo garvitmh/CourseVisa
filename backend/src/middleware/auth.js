@@ -24,6 +24,17 @@ exports.protect = async (req, res, next) => {
 
     req.user = await User.findById(decoded.id);
 
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: 'Not authorized to access this route' });
+    }
+
+    if (req.user.status !== 'active') {
+      return res.status(403).json({
+        success: false,
+        error: 'Account is suspended. Please contact support.'
+      });
+    }
+
     next();
   } catch (err) {
     return res.status(401).json({ success: false, error: 'Not authorized to access this route' });

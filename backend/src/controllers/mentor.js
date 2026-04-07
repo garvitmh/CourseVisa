@@ -8,7 +8,30 @@ const Enrollment = require('../models/Enrollment');
 // @access  Public
 exports.submitApplication = async (req, res, next) => {
   try {
-    const application = await MentorApplication.create(req.body);
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Resume file is required' });
+    }
+
+    const experience = Number(req.body.experience);
+    if (!Number.isFinite(experience) || experience < 0) {
+      return res.status(400).json({ success: false, error: 'Experience must be a valid number' });
+    }
+
+    const resumePath = `/uploads/resumes/${req.file.filename}`;
+
+    const applicationPayload = {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      expertise: req.body.expertise,
+      experience,
+      qualifications: req.body.qualifications,
+      bio: req.body.bio,
+      linkedinUrl: req.body.linkedinUrl,
+      resumeUrl: resumePath,
+    };
+
+    const application = await MentorApplication.create(applicationPayload);
 
     res.status(201).json({
       success: true,

@@ -1,6 +1,17 @@
+import { PAYMENT_MODE, PaymentMode } from '../constants';
+
 const API_URL = import.meta.env.VITE_API_URL 
   ? (import.meta.env.VITE_API_URL.endsWith('/api/v1') ? import.meta.env.VITE_API_URL : `${import.meta.env.VITE_API_URL}/api/v1`)
   : '/api/v1';
+
+const getErrorMessage = async (res: Response, fallback: string) => {
+  try {
+    const payload = await res.json();
+    return payload.error || payload.message || fallback;
+  } catch {
+    return fallback;
+  }
+};
 
 export const api = {
   auth: {
@@ -144,14 +155,25 @@ export const api = {
     }
   },
   payment: {
-    createOrder: async (amount: number) => {
+    getMode: (): PaymentMode => PAYMENT_MODE,
+    createOrder: async (amount: number, items: any[]) => {
       const token = localStorage.getItem('auth_token');
       const res = await fetch(`${API_URL}/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ amount })
+        body: JSON.stringify({ amount, items })
       });
-      if (!res.ok) throw new Error('Order creation failed');
+      if (!res.ok) throw new Error(await getErrorMessage(res, 'Order creation failed'));
+      return res.json();
+    },
+    verify: async (payload: any) => {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/payment/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await getErrorMessage(res, 'Payment verification failed'));
       return res.json();
     },
     simulate: async (amount: number, items: any[]) => {
@@ -161,7 +183,7 @@ export const api = {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ amount, items })
       });
-      if (!res.ok) throw new Error('Simulated payment failed');
+      if (!res.ok) throw new Error(await getErrorMessage(res, 'Simulated payment failed'));
       return res.json();
     }
   },

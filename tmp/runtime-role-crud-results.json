@@ -1,0 +1,16 @@
+﻿{
+    "admin_courses_success":  true,
+    "admin_courses_count":  21,
+    "admin_applications_success":  true,
+    "admin_applications_count":  4,
+    "admin_enrollments_success":  true,
+    "admin_enrollments_count":  8,
+    "mentor_admin_courses_status":  403,
+    "mentor_admin_courses_blocked":  true,
+    "student_course_create_status":  403,
+    "student_course_create_blocked":  true,
+    "student_course_delete_status":  403,
+    "student_course_delete_blocked":  true,
+    "student_mentor_stats_status":  403,
+    "student_mentor_stats_blocked":  true
+}

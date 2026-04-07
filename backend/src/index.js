@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/db');
 
 // Load env vars
@@ -26,6 +27,9 @@ app.use(helmet());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// Static assets
+app.use('/uploads', express.static(path.join(__dirname, '..', 'public', 'uploads')));
 
 // Route files
 const auth = require('./routes/auth');

@@ -1,12 +1,12 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { User, AuthState, SignupFormData, LoginFormData } from '../types';
 import { STORAGE_KEYS } from '../constants';
 import { api } from '../services/api';
 
 interface AuthContextType extends AuthState {
-  signup: (formData: SignupFormData) => Promise<void>;
-  login: (formData: LoginFormData) => Promise<void>;
-  googleLogin: (token: string) => Promise<void>;
+  signup: (formData: SignupFormData) => Promise<User>;
+  login: (formData: LoginFormData) => Promise<User>;
+  googleLogin: (token: string) => Promise<User>;
   logout: () => void;
   checkAuth: () => void;
 }
@@ -22,9 +22,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const normalizeUser = (payload: any): User | null => {
+    if (!payload) return null;
+    const normalizedId = String(payload.id ?? payload._id ?? '');
+    if (!normalizedId) return null;
+
+    return {
+      ...payload,
+      id: normalizedId,
+      _id: payload._id ? String(payload._id) : normalizedId,
+      status: payload.status || 'active',
+    } as User;
+  };
+
+  const checkAuth = useCallback(async () => {
+    const token = localStorage.getItem(STORAGE_KEYS.authToken);
+    const storedUser = localStorage.getItem(STORAGE_KEYS.authUser);
+
+    if (token && storedUser) {
+      try {
+        setIsLoading(true);
+        const parsedUser = normalizeUser(JSON.parse(storedUser));
+        if (parsedUser) {
+          setUser(parsedUser);
+        }
+
+        const res = await api.auth.getMe(token);
+        if (res.success) {
+          const currentUser = normalizeUser(res.data);
+          if (currentUser) {
+            setUser(currentUser);
+          } else {
+            logout();
+          }
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err);
+        logout();
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   useEffect(() => {
     if (user) {
@@ -37,32 +80,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem(STORAGE_KEYS.authToken);
-    const storedUser = localStorage.getItem(STORAGE_KEYS.authUser);
-
-    if (token && storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-        // Optionally verify token with /auth/me
-        const res = await api.auth.getMe(token);
-        if (res.success) {
-          setUser(res.data);
-        }
-      } catch (err) {
-        console.error('Auth check failed:', err);
-        logout();
-      }
-    }
-  };
-
   const signup = async (formData: SignupFormData) => {
     setIsLoading(true);
     setError(null);
     try {
       const res = await api.auth.register(formData);
-      setUser(res.user);
+      const normalizedUser = normalizeUser(res.user);
+      if (!normalizedUser) {
+        throw new Error('Unable to initialize user session');
+      }
+      setUser(normalizedUser);
       localStorage.setItem(STORAGE_KEYS.authToken, res.token);
+      return normalizedUser;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Signup failed';
       setError(message);
@@ -77,8 +106,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const res = await api.auth.login(formData);
-      setUser(res.user);
+      const normalizedUser = normalizeUser(res.user);
+      if (!normalizedUser) {
+        throw new Error('Unable to initialize user session');
+      }
+      setUser(normalizedUser);
       localStorage.setItem(STORAGE_KEYS.authToken, res.token);
+      return normalizedUser;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed';
       setError(message);
@@ -101,8 +135,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const res = await api.auth.googleLogin(token);
-      setUser(res.user);
+      const normalizedUser = normalizeUser(res.user);
+      if (!normalizedUser) {
+        throw new Error('Unable to initialize user session');
+      }
+      setUser(normalizedUser);
       localStorage.setItem(STORAGE_KEYS.authToken, res.token);
+      return normalizedUser;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Google Login failed';
       setError(message);

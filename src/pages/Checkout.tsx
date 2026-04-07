@@ -5,11 +5,38 @@ import { useAuth } from '../hooks';
 import { Button, Card, CardBody, CardHeader, Input } from '../components/shared';
 import { formatCurrency } from '../utils/currencies';
 import { api } from '../services/api';
+import { getDashboardRouteForRole } from '../utils/auth';
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: any) => {
+      open: () => void;
+      on: (event: string, callback: (response: any) => void) => void;
+    };
+  }
+}
+
+const loadRazorpayScript = () =>
+  new Promise<boolean>((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { cart, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
+  const paymentMode = api.payment.getMode();
+  const isSimulationMode = paymentMode === 'simulate';
   const [isProcessing, setIsProcessing] = useState(false);
   const [billingInfo, setBillingInfo] = useState({
     name: user?.username || '',
@@ -38,21 +65,95 @@ export default function Checkout() {
     setStep('payment');
   };
 
+  const launchRazorpayCheckout = async () => {
+    const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+    if (!razorpayKey) {
+      throw new Error('VITE_RAZORPAY_KEY_ID is missing for razorpay mode');
+    }
+
+    const scriptLoaded = await loadRazorpayScript();
+    if (!scriptLoaded) {
+      throw new Error('Unable to load Razorpay checkout script');
+    }
+
+    const orderResponse = await api.payment.createOrder(cart.totalPrice, cart.items);
+    if (!orderResponse.success || !orderResponse.order?.id) {
+      throw new Error(orderResponse.error || 'Unable to create Razorpay order');
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      const RazorpayCheckout = window.Razorpay;
+      if (!RazorpayCheckout) {
+        reject(new Error('Razorpay checkout is unavailable'));
+        return;
+      }
+
+      const checkout = new RazorpayCheckout({
+        key: razorpayKey,
+        amount: orderResponse.order.amount,
+        currency: orderResponse.order.currency || 'INR',
+        order_id: orderResponse.order.id,
+        name: 'Coursiva',
+        description: 'Course enrollment payment',
+        prefill: {
+          name: billingInfo.name,
+          email: billingInfo.email,
+          contact: billingInfo.phone,
+        },
+        theme: { color: '#6A6CFF' },
+        modal: {
+          ondismiss: () => resolve(),
+        },
+        handler: async (response: any) => {
+          try {
+            const verifyResponse = await api.payment.verify({
+              ...response,
+              amount: cart.totalPrice,
+              items: cart.items,
+            });
+
+            if (!verifyResponse.success) {
+              reject(new Error(verifyResponse.error || 'Payment verification failed'));
+              return;
+            }
+
+            clearCart();
+            navigate(getDashboardRouteForRole(user?.role), { replace: true });
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        },
+      });
+
+      checkout.on('payment.failed', (response: any) => {
+        const description = response?.error?.description || response?.error?.reason;
+        reject(new Error(description || 'Payment failed'));
+      });
+
+      checkout.open();
+    });
+  };
+
   const handlePaymentSubmit = async () => {
     setIsProcessing(true);
 
     try {
-      const res = await api.payment.simulate(cart.totalPrice, cart.items);
-      
-      if (res.success) {
-        clearCart();
-        navigate('/dashboard'); // Direct user explicitly to their dashboard after purchase
+      if (isSimulationMode) {
+        const res = await api.payment.simulate(cart.totalPrice, cart.items);
+
+        if (res.success) {
+          clearCart();
+          navigate(getDashboardRouteForRole(user?.role), { replace: true });
+        } else {
+          alert(res.error || 'Payment failed');
+        }
       } else {
-        alert(res.error || 'Payment failed');
+        await launchRazorpayCheckout();
       }
     } catch (e) {
-      console.error(e);
-      alert('Failed to initiate payment');
+      console.error('Payment initiation failed:', e);
+      alert(e instanceof Error ? e.message : 'Failed to initiate payment');
     } finally {
       setIsProcessing(false);
     }
@@ -161,8 +262,14 @@ export default function Checkout() {
               <CardBody>
                 <div className="flex flex-col gap-6 text-center py-8">
                   <div className="mb-4">
-                    <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Simulated Payment Gateway</h3>
-                    <p className="text-base-content/70 mt-2">This is a mock transaction environment. Your payment will be simulated, and course access will be granted instantly without any real charges.</p>
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                      {isSimulationMode ? 'Simulated Payment Gateway' : 'Razorpay Secure Checkout'}
+                    </h3>
+                    <p className="text-base-content/70 mt-2">
+                      {isSimulationMode
+                        ? 'This is a mock transaction environment. Your payment will be simulated, and course access will be granted instantly without any real charges.'
+                        : 'Real payment mode is active. You will be redirected to Razorpay checkout, and enrollment will be granted only after signature verification.'}
+                    </p>
                   </div>
                   
                   <div className="flex justify-center gap-4 mt-4">
@@ -170,7 +277,13 @@ export default function Checkout() {
                       Go Back
                     </Button>
                     <Button variant="primary" onClick={handlePaymentSubmit} disabled={isProcessing} className="px-8 shadow-lg">
-                      {isProcessing ? <span className="loading loading-spinner"></span> : `Simulate Payment of ${formatCurrency(cart.totalPrice)}`}
+                      {isProcessing ? (
+                        <span className="loading loading-spinner"></span>
+                      ) : isSimulationMode ? (
+                        `Simulate Payment of ${formatCurrency(cart.totalPrice)}`
+                      ) : (
+                        `Pay ${formatCurrency(cart.totalPrice)} with Razorpay`
+                      )}
                     </Button>
                   </div>
                 </div>

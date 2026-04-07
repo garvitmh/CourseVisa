@@ -14,6 +14,7 @@ export default function CourseDetail() {
   const [activeTab, setActiveTab] = useState('curriculum');
   const [enrolledCourseIds, setEnrolledCourseIds] = useState<string[]>([]);
   const { addToCart, isInCart } = useCart();
+  const getVideoId = (videoInfo: any) => String(videoInfo?._id || videoInfo?.id || '');
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -32,7 +33,7 @@ export default function CourseDetail() {
         if (token) {
            const enrollRes = await api.student.getEnrolledCourses();
            if(enrollRes.success && enrollRes.data) {
-              setEnrolledCourseIds(enrollRes.data.map((e: any) => e.id));
+              setEnrolledCourseIds(enrollRes.data.map((e: any) => String(e.id || e._id)));
            }
         }
       } catch (err) {
@@ -59,8 +60,9 @@ export default function CourseDetail() {
   );
 
   const videos = course.videos || [];
-  const inCart = isInCart(course._id);
-  const isEnrolled = enrolledCourseIds.includes(course._id);
+  const courseId = String(course.id || course._id);
+  const inCart = isInCart(courseId);
+  const isEnrolled = enrolledCourseIds.includes(courseId);
 
   const canWatchVideo = (videoInfo: any) => {
     return isEnrolled || videoInfo?.isTrial;
@@ -143,7 +145,7 @@ export default function CourseDetail() {
                         onEnded={async () => {
                           if (isEnrolled) {
                             try {
-                              await api.student.updateProgress(course._id, selectedVideo._id);
+                              await api.student.updateProgress(courseId, getVideoId(selectedVideo));
                             } catch (err) {
                               console.error('Failed to update progress:', err);
                             }
@@ -198,7 +200,7 @@ export default function CourseDetail() {
                 ) : (
                   <button 
                     onClick={() => addToCart({
-                      id: course._id, subjectId: 'course', category: course.category,
+                      id: courseId, subjectId: 'course', category: course.category,
                       title: course.title, rating: course.rating, price: course.price,
                       image: course.image, description: course.description
                     } as any)}
@@ -298,25 +300,26 @@ export default function CourseDetail() {
                 ) : (
                   <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden divide-y divide-base-200">
                     {videos.map((vid: any, i: number) => {
+                      const vidId = getVideoId(vid) || String(i);
                       const locked = !canWatchVideo(vid);
                       return (
                         <button 
-                          key={vid._id || i}
+                          key={vidId}
                           onClick={() => setSelectedVideo(vid)}
                           className={`w-full text-left p-5 flex items-center justify-between gap-4 transition-all ${
-                            selectedVideo?._id === vid._id 
+                            getVideoId(selectedVideo) === vidId
                               ? 'bg-primary/5 border-l-4 border-l-primary' 
                               : 'hover:bg-base-200 border-l-4 border-l-transparent'
                           } ${locked ? 'opacity-70' : ''}`}
                         >
                           <div className="flex items-center gap-4 min-w-0">
                             <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                              selectedVideo?._id === vid._id ? 'bg-primary text-primary-content' : 'bg-base-300 text-base-content/60'
+                              getVideoId(selectedVideo) === vidId ? 'bg-primary text-primary-content' : 'bg-base-300 text-base-content/60'
                             } font-bold text-sm shrink-0`}>
                               {locked ? <Lock className="w-4 h-4"/> : i + 1}
                             </div>
                             <div>
-                              <div className={`font-semibold truncate ${selectedVideo?._id === vid._id ? 'text-primary' : ''}`}>
+                              <div className={`font-semibold truncate ${getVideoId(selectedVideo) === vidId ? 'text-primary' : ''}`}>
                                 {vid.title} {vid.isTrial && <span className="badge badge-sm badge-accent ml-2">FREE Preview</span>}
                               </div>
                               <div className="text-xs text-base-content/50 mt-1 flex items-center gap-1 font-medium">

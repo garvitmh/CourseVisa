@@ -121,6 +121,18 @@ export const PAYMENT_METHODS = [
   { id: 'wallet', label: 'Wallet', icon: '👛' },
 ];
 
+export const PAYMENT_MODES = {
+  simulate: 'simulate',
+  razorpay: 'razorpay',
+} as const;
+
+export type PaymentMode = keyof typeof PAYMENT_MODES;
+
+export const PAYMENT_MODE: PaymentMode =
+  import.meta.env.VITE_PAYMENT_MODE === PAYMENT_MODES.razorpay
+    ? PAYMENT_MODES.razorpay
+    : PAYMENT_MODES.simulate;
+
 /* Sort Options */
 export const SORT_OPTIONS = [
   { id: 'newest', label: 'Newest' },

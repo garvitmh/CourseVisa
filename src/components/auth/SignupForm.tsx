@@ -8,6 +8,7 @@ import { FORM_VALIDATION_RULES } from '../../constants';
 import { Input } from '../shared/Input';
 import { Button } from '../shared/Button';
 import PasswordStrength from './PasswordStrength';
+import { getDashboardRouteForRole } from '../../utils/auth';
 
 export default function SignupForm() {
   const navigate = useNavigate();
@@ -21,14 +22,14 @@ export default function SignupForm() {
       return;
     }
     try {
-      await signup({
+      const signedUpUser = await signup({
         username: values.username,
         email: values.email,
         password: values.password,
         confirmPassword: values.confirmPassword,
         phone: values.phone,
       });
-      navigate('/');
+      navigate(getDashboardRouteForRole(signedUpUser.role), { replace: true });
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Signup failed. Please try again.');
     }
@@ -49,8 +50,8 @@ export default function SignupForm() {
     onSuccess: async (tokenResponse) => {
       try {
         setFormError(null);
-        await googleLogin(tokenResponse.access_token);
-        navigate('/');
+        const loggedInUser = await googleLogin(tokenResponse.access_token);
+        navigate(getDashboardRouteForRole(loggedInUser.role), { replace: true });
       } catch (err) {
         setFormError(err instanceof Error ? err.message : 'Google login failed');
       }

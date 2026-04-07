@@ -4,12 +4,14 @@ import { useAuth, useCart } from '../../hooks';
 import { ThemeContext, THEMES } from '../../context/ThemeContext';
 import { BookOpen, Layers, LibraryBig, Presentation, Palette, ShoppingCart, User, LogOut, Settings, LayoutDashboard, Shield, BookMarked, Home, Baby, GraduationCap, School } from 'lucide-react';
 import { StaggeredMenu } from '../animations/StaggeredMenu';
+import { getDashboardRouteForRole } from '../../utils/auth';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { cart } = useCart();
   const navigate = useNavigate();
   const themeCtx = useContext(ThemeContext);
+  const dashboardRoute = getDashboardRouteForRole(user?.role);
 
   const handleLogout = () => {
     logout();
@@ -21,7 +23,7 @@ export default function Navbar() {
     { label: 'Books', ariaLabel: 'Browse books', link: '/books' },
     { label: 'Courses', ariaLabel: 'All courses', link: '/courses' },
     { label: 'Mentor', ariaLabel: 'Become a mentor', link: '/mentor' },
-    ...(user ? [{ label: 'Dashboard', ariaLabel: 'User dashboard', link: '/dashboard' }] : [
+    ...(user ? [{ label: 'Dashboard', ariaLabel: 'User dashboard', link: dashboardRoute }] : [
       { label: 'Login', ariaLabel: 'Login to account', link: '/login' },
       { label: 'Sign Up', ariaLabel: 'Create new account', link: '/signup' }
     ])
@@ -45,7 +47,7 @@ export default function Navbar() {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 font-medium gap-2 text-base items-center">
           <li><Link to="/" className="hover:text-primary transition-colors flex items-center gap-2 px-4"><Home className="w-5 h-5"/> Home</Link></li>
-          {user && <li><Link to="/dashboard" className="hover:text-primary transition-colors flex items-center gap-2 px-4"><BookMarked className="w-5 h-5"/> My Courses</Link></li>}
+          {user && <li><Link to={dashboardRoute} className="hover:text-primary transition-colors flex items-center gap-2 px-4"><BookMarked className="w-5 h-5"/> My Courses</Link></li>}
           <li><Link to="/books" className="hover:text-primary transition-colors flex items-center gap-2 px-4"><BookOpen className="w-5 h-5"/> Books</Link></li>
           <li>
             <details>
@@ -133,7 +135,7 @@ export default function Navbar() {
                 <div className="divider my-1 opacity-30"></div>
                 {user.role === 'admin' && <li><Link to="/admin" className="py-3"><Shield className="w-5 h-5 mr-3 text-error"/> Admin Dashboard</Link></li>}
                 {(user.role === 'mentor' || user.role === 'admin') && <li><Link to="/mentor-dashboard" className="py-3"><LayoutDashboard className="w-5 h-5 mr-3 text-secondary"/> Mentor Dashboard</Link></li>}
-                <li><Link to="/dashboard" className="py-3"><BookMarked className="w-5 h-5 mr-3 text-primary"/> My Learning</Link></li>
+                <li><Link to={dashboardRoute} className="py-3"><BookMarked className="w-5 h-5 mr-3 text-primary"/> My Learning</Link></li>
                 <li><Link to="/profile" className="py-3"><Settings className="w-5 h-5 mr-3 base-content/70"/> Profile Settings</Link></li>
                 <div className="divider my-1 opacity-30"></div>
                 <li><button className="text-error font-medium hover:bg-error/10 py-3" onClick={handleLogout}><LogOut className="w-5 h-5 mr-3"/> Sign Out</button></li>

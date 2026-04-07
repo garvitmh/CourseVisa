@@ -1,8 +1,5 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { OAuth2Client } = require('google-auth-library');
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -49,6 +46,10 @@ exports.login = async (req, res, next) => {
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
+
+    if (user.status !== 'active') {
+      return res.status(403).json({ success: false, error: 'Account is suspended. Please contact support.' });
     }
 
     // Check if password matches
@@ -115,6 +116,10 @@ exports.googleLogin = async (req, res, next) => {
       await user.save();
     }
 
+    if (user.status !== 'active') {
+      return res.status(403).json({ success: false, error: 'Account is suspended. Please contact support.' });
+    }
+
     console.log('Google login successful for:', email);
     sendTokenResponse(user, 200, res);
   } catch (err) {
@@ -140,7 +145,8 @@ const sendTokenResponse = (user, statusCode, res) => {
       id: user._id,
       username: user.username,
       email: user.email,
-      role: user.role
+      role: user.role,
+      status: user.status
     }
   });
 };
@@ -234,23 +240,37 @@ exports.updatePassword = async (req, res, next) => {
 // @route   POST /api/v1/auth/forgot-password
 // @access  Public
 exports.forgotPassword = async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
+  try {
+    const user = await User.findOne({ email: req.body.email });
 
-  if (!user) {
-    return res.status(404).json({ success: false, error: 'There is no user with that email' });
+    // Keep response generic to avoid revealing whether an account exists.
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        data: 'If an account exists for that email, password reset instructions have been sent.'
+      });
+    }
+
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    const allowInlineResetToken =
+      process.env.NODE_ENV !== 'production' &&
+      process.env.ALLOW_RESET_TOKEN_RESPONSE === 'true';
+
+    const payload = {
+      success: true,
+      data: 'If an account exists for that email, password reset instructions have been sent.'
+    };
+
+    if (allowInlineResetToken) {
+      payload.resetToken = resetToken;
+    }
+
+    return res.status(200).json(payload);
+  } catch (err) {
+    return res.status(500).json({ success: false, error: 'Failed to process forgot password request' });
   }
-
-  // Get reset token
-  const resetToken = user.getResetPasswordToken();
-
-  await user.save({ validateBeforeSave: false });
-
-  // In a real app, send email here. For now, we return the token for testing.
-  res.status(200).json({
-    success: true,
-    data: 'Token sent to email (Simulation)',
-    resetToken: resetToken // Returning it so frontend can use it in this demo
-  });
 };
 
 // @desc    Reset Password

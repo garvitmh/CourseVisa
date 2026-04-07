@@ -1,15 +1,32 @@
 const multer = require('multer');
+const fs = require('fs');
 const path = require('path');
+
+const uploadsRoot = path.join(__dirname, '..', '..', 'public', 'uploads');
+const uploadPaths = {
+  resume: path.join(uploadsRoot, 'resumes'),
+  image: path.join(uploadsRoot, 'images'),
+  misc: path.join(uploadsRoot, 'misc'),
+};
+
+const ensureDirectory = (dirPath) => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+};
 
 // Set storage engine
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     if (file.fieldname === 'resume') {
-      cb(null, 'public/uploads/resumes');
+      ensureDirectory(uploadPaths.resume);
+      cb(null, uploadPaths.resume);
     } else if (file.fieldname === 'image') {
-      cb(null, 'public/uploads/images');
+      ensureDirectory(uploadPaths.image);
+      cb(null, uploadPaths.image);
     } else {
-      cb(null, 'public/uploads/misc');
+      ensureDirectory(uploadPaths.misc);
+      cb(null, uploadPaths.misc);
     }
   },
   filename(req, file, cb) {
@@ -19,20 +36,29 @@ const storage = multer.diskStorage({
 
 // Check File Type
 function checkFileType(file, cb) {
-  let filetypes;
   if (file.fieldname === 'resume') {
-    filetypes = /pdf|doc|docx/;
-  } else {
-    filetypes = /jpeg|jpg|png|webp/;
-  }
-  
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
+    const allowedExt = /\.(pdf|doc|docx)$/i;
+    const allowedMimeTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
 
-  if (extname && mimetype) {
-    return cb(null, true);
+    const extOk = allowedExt.test(path.extname(file.originalname).toLowerCase());
+    const mimeOk = allowedMimeTypes.includes(file.mimetype);
+    if (extOk && mimeOk) {
+      return cb(null, true);
+    }
+    return cb('Error: Invalid resume file type!');
   } else {
-    cb('Error: Invalid file type!');
+    const imageFiletypes = /jpeg|jpg|png|webp/;
+    const extname = imageFiletypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = imageFiletypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    return cb('Error: Invalid image file type!');
   }
 }
 

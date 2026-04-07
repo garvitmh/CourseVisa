@@ -1,0 +1,9 @@
+﻿{
+    "mentor1_id":  "69d4e88f3b615a3cb3da1f98",
+    "mentor2_id":  "69d4e88f3b615a3cb3da1f99",
+    "other_course_id":  "69d4e88f3b615a3cb3da1fb8",
+    "mentor_delete_other_course_status":  401,
+    "mentor_delete_other_course_blocked":  true,
+    "mentor2_delete_same_other_course_status":  401,
+    "mentor2_delete_same_other_course_blocked":  true
+}

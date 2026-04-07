@@ -5,6 +5,7 @@ import { Mail, ArrowLeft, CheckCircle, AlertCircle, Key } from 'lucide-react';
 import { api } from '../services/api';
 
 export default function ForgotPassword() {
+  const allowInlineResetToken = import.meta.env.VITE_ALLOW_RESET_TOKEN_RESPONSE === 'true';
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -24,9 +25,11 @@ export default function ForgotPassword() {
     try {
       const res = await api.auth.forgotPassword(email);
       setIsSubmitted(true);
-      // In this simulation, we get the token back directly for demonstration
-      if (res.resetToken) {
+      // Local dev-only flow: backend may optionally return token for simulation.
+      if (allowInlineResetToken && res.resetToken) {
         setSimulatedToken(res.resetToken);
+      } else {
+        setSimulatedToken(null);
       }
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -70,6 +73,28 @@ export default function ForgotPassword() {
             </div>
             <h2 className="text-2xl font-black mb-2">Password Reset Successful</h2>
             <p className="text-base-content/60 mb-8">Your password has been successfully updated. You can now log in with your new password.</p>
+            <Link to="/login" className="w-full">
+              <Button variant="primary" className="w-full py-4 shadow-lg">Back to Login</Button>
+            </Link>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isSubmitted && !simulatedToken) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-base-100">
+        <Card className="max-w-md w-full shadow-2xl border border-base-200 overflow-hidden">
+          <div className="h-2 bg-primary"></div>
+          <CardBody className="p-8 text-center">
+            <div className="w-20 h-20 bg-success/20 text-success rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-10 h-10" />
+            </div>
+            <h2 className="text-2xl font-black mb-2">Check your email</h2>
+            <p className="text-base-content/60 mb-8">
+              If an account exists for <strong>{email}</strong>, a reset link has been sent.
+            </p>
             <Link to="/login" className="w-full">
               <Button variant="primary" className="w-full py-4 shadow-lg">Back to Login</Button>
             </Link>

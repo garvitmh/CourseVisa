@@ -2,16 +2,17 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import LoginForm from '../components/auth/LoginForm';
+import { getDashboardRouteForRole } from '../utils/auth';
 
 export default function Login() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
+    if (isAuthenticated && user) {
+      navigate(getDashboardRouteForRole(user.role), { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user]);
 
   return (
     <div className="min-h-screen flex text-base-content bg-base-100 relative overflow-hidden">

@@ -145,11 +145,12 @@ export default function Books() {
 
             <AnimatedList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {currentItems.map((book) => {
+                const bookId = String(book.id || book._id);
                 const badgeColor = CATEGORY_COLORS[book.category] || 'badge-neutral';
-                const inCart = isInCart(book._id);
+                const inCart = isInCart(bookId);
                 return (
                   <div
-                    key={book._id}
+                    key={bookId}
                     className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-base-300 group flex flex-col h-full"
                   >
                     {/* Book Cover */}
@@ -219,7 +220,7 @@ export default function Books() {
                       </div>
 
                       <div className="flex gap-2 w-full mt-auto">
-                        <Link to={`/books/${book._id}`} className="flex-1">
+                        <Link to={`/books/${bookId}`} className="flex-1">
                           <button className="btn btn-outline btn-primary w-full">
                             Details
                           </button>
@@ -234,7 +235,7 @@ export default function Books() {
                           <button
                             disabled={book.stock === 0}
                             onClick={() => addToCart({
-                              id: book._id, subjectId: 'book', category: book.category,
+                              id: bookId, subjectId: 'book', category: book.category,
                               title: book.title, rating: 5, price: book.price,
                               image: book.image, description: book.description,
                             } as any)}

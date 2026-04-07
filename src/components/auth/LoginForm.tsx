@@ -7,6 +7,7 @@ import { LoginFormData } from '../../types';
 import { FORM_VALIDATION_RULES } from '../../constants';
 import { Input } from '../shared/Input';
 import { Button } from '../shared/Button';
+import { getDashboardRouteForRole } from '../../utils/auth';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -22,8 +23,8 @@ export default function LoginForm() {
   async function handleLoginLogic() {
     setFormError(null);
     try {
-      await login({ email: values.email, password: values.password });
-      navigate('/');
+      const loggedInUser = await login({ email: values.email, password: values.password });
+      navigate(getDashboardRouteForRole(loggedInUser.role), { replace: true });
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     }
@@ -37,8 +38,8 @@ export default function LoginForm() {
     onSuccess: async (tokenResponse) => {
       try {
         setFormError(null);
-        await googleLogin(tokenResponse.access_token);
-        navigate('/');
+        const loggedInUser = await googleLogin(tokenResponse.access_token);
+        navigate(getDashboardRouteForRole(loggedInUser.role), { replace: true });
       } catch (err) {
         setFormError(err instanceof Error ? err.message : 'Google login failed');
       }

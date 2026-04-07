@@ -86,7 +86,7 @@ export default function App() {
                           <Route
                             path="/admin"
                             element={
-                              <ProtectedRoute>
+                              <ProtectedRoute allowedRoles={['admin']}>
                                 <AdminDashboard />
                               </ProtectedRoute>
                             }
@@ -94,7 +94,7 @@ export default function App() {
                           <Route
                             path="/mentor-dashboard"
                             element={
-                              <ProtectedRoute>
+                              <ProtectedRoute allowedRoles={['mentor', 'admin']}>
                                 <MentorDashboard />
                               </ProtectedRoute>
                             }
@@ -102,7 +102,7 @@ export default function App() {
                           <Route
                             path="/dashboard"
                             element={
-                              <ProtectedRoute>
+                              <ProtectedRoute allowedRoles={['student', 'mentor', 'admin']}>
                                 <StudentDashboard />
                               </ProtectedRoute>
                             }

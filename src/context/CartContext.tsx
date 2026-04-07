@@ -10,13 +10,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const normalizeId = (value: unknown) => String(value ?? '');
 
   // Load cart from localStorage on mount
   useEffect(() => {
     const storedCart = localStorage.getItem(STORAGE_KEYS.cartItems);
     if (storedCart) {
       try {
-        setItems(JSON.parse(storedCart));
+        const parsed = JSON.parse(storedCart);
+        if (Array.isArray(parsed)) {
+          setItems(parsed.map((item) => ({
+            ...item,
+            courseId: normalizeId(item.courseId),
+            addedAt: item.addedAt ? new Date(item.addedAt) : new Date(),
+          })));
+        }
       } catch (err) {
         console.error('Failed to parse stored cart:', err);
       }
@@ -36,11 +44,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 
   const addToCart = (course: Course) => {
+    const courseId = normalizeId(course.id || (course as any)._id);
+    if (!courseId) return;
+
     setItems(prevItems => {
-      const existingItem = prevItems.find(item => item.courseId === course.id);
+      const existingItem = prevItems.find(item => item.courseId === courseId);
       if (existingItem) {
         return prevItems.map(item =>
-          item.courseId === course.id
+          item.courseId === courseId
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -48,8 +59,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return [
         ...prevItems,
         {
-          courseId: course.id,
-          course,
+          courseId,
+          course: { ...course, id: courseId },
           quantity: 1,
           addedAt: new Date(),
         },
@@ -57,18 +68,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (courseId: number) => {
-    setItems(prevItems => prevItems.filter(item => item.courseId !== courseId));
+  const removeFromCart = (courseId: string) => {
+    const normalizedCourseId = normalizeId(courseId);
+    setItems(prevItems => prevItems.filter(item => item.courseId !== normalizedCourseId));
   };
 
-  const updateQuantity = (courseId: number, quantity: number) => {
+  const updateQuantity = (courseId: string, quantity: number) => {
+    const normalizedCourseId = normalizeId(courseId);
     if (quantity <= 0) {
-      removeFromCart(courseId);
+      removeFromCart(normalizedCourseId);
       return;
     }
     setItems(prevItems =>
       prevItems.map(item =>
-        item.courseId === courseId ? { ...item, quantity } : item
+        item.courseId === normalizedCourseId ? { ...item, quantity } : item
       )
     );
   };
@@ -77,8 +90,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   };
 
-  const isInCart = (courseId: number): boolean => {
-    return items.some(item => item.courseId === courseId);
+  const isInCart = (courseId: string): boolean => {
+    const normalizedCourseId = normalizeId(courseId);
+    return items.some(item => item.courseId === normalizedCourseId);
   };
 
   const cart: Cart = {

@@ -61,8 +61,9 @@ export default function BookDetail() {
   );
 
   const handleAddToCart = () => {
+    const bookId = String(book.id || book._id);
     addToCart({
-      id: book._id,
+      id: bookId,
       subjectId: 'book',
       category: book.category,
       title: book.title,
@@ -197,7 +198,7 @@ export default function BookDetail() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              {isInCart(book._id) ? (
+              {isInCart(String(book.id || book._id)) ? (
                 <Link to="/cart" className="flex-1">
                   <button className="btn btn-success btn-lg w-full gap-2">
                     <ShoppingCart className="w-5 h-5"/> View in Cart

@@ -1,26 +1,73 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const Enrollment = require('../models/Enrollment');
+
+const PAYMENT_MODES = {
+  SIMULATE: 'simulate',
+  RAZORPAY: 'razorpay',
+};
+
+const getPaymentMode = () => {
+  const configured = (process.env.PAYMENT_MODE || PAYMENT_MODES.SIMULATE).toLowerCase();
+  return configured === PAYMENT_MODES.RAZORPAY ? PAYMENT_MODES.RAZORPAY : PAYMENT_MODES.SIMULATE;
+};
+
+const resolveCourseId = (item) => {
+  if (!item) return '';
+  return String(item.courseId || item.id || item.course?._id || item.course?.id || '');
+};
+
+const enrollCoursesForUser = async (userId, items = []) => {
+  let enrolledCount = 0;
+
+  for (const item of items) {
+    const courseId = resolveCourseId(item);
+    if (!courseId) continue;
+
+    const existing = await Enrollment.findOne({ user: userId, course: courseId });
+    if (existing) continue;
+
+    await Enrollment.create({
+      user: userId,
+      course: courseId,
+      progress: 0
+    });
+    enrolledCount += 1;
+  }
+
+  return enrolledCount;
+};
 
 // @desc    Create Razorpay order
 // @route   POST /api/v1/payment/create-order
 // @access  Private
 exports.createOrder = async (req, res, next) => {
   try {
-    const { amount } = req.body;
-    
-    // Convert generic amount parameter to INR paise
-    const amountInPaise = Math.round(Number(amount) * 100 * 80); // Quick conversion logic ($1 -> Rs80 approx -> Paise)
+    const paymentMode = getPaymentMode();
+    if (paymentMode !== PAYMENT_MODES.RAZORPAY) {
+      return res.status(409).json({
+        success: false,
+        error: 'Razorpay order creation is disabled while PAYMENT_MODE=simulate'
+      });
+    }
 
-    // Using dummy instance if keys are not present yet
+    const { amount } = req.body;
+    const numericAmount = Number(amount);
+
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Amount must be a positive number'
+      });
+    }
+
+    // Backend expects amount in INR, Razorpay expects paise.
+    const amountInPaise = Math.round(numericAmount * 100);
+
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-      return res.status(200).json({
-        success: true,
-        order: {
-          id: "order_" + Math.random().toString(36).substring(7),
-          amount: amountInPaise,
-          currency: "INR"
-        },
-        mock: true
+      return res.status(500).json({
+        success: false,
+        error: 'Razorpay configuration missing on server'
       });
     }
 
@@ -31,7 +78,7 @@ exports.createOrder = async (req, res, next) => {
 
     const options = {
       amount: amountInPaise,
-      currency: "INR",
+      currency: 'INR',
       receipt: "receipt_order_" + Math.random().toString(36).substring(7),
     };
 
@@ -40,6 +87,7 @@ exports.createOrder = async (req, res, next) => {
     res.status(200).json({
       success: true,
       order,
+      mode: paymentMode
     });
   } catch (error) {
     res.status(500).json({
@@ -54,10 +102,25 @@ exports.createOrder = async (req, res, next) => {
 // @access  Private
 exports.verifyPayment = async (req, res, next) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-    
+    const paymentMode = getPaymentMode();
+    if (paymentMode !== PAYMENT_MODES.RAZORPAY) {
+      return res.status(409).json({
+        success: false,
+        error: 'Razorpay verification is disabled while PAYMENT_MODE=simulate'
+      });
+    }
+
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, items } = req.body;
+
     if (!process.env.RAZORPAY_KEY_SECRET) {
-      return res.status(200).json({ success: true, message: "Mock verification completed" });
+      return res.status(500).json({ success: false, error: 'Razorpay configuration missing on server' });
+    }
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing Razorpay verification fields'
+      });
     }
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -70,11 +133,14 @@ exports.verifyPayment = async (req, res, next) => {
     const isAuthentic = expectedSignature === razorpay_signature;
 
     if (isAuthentic) {
-      // Optional: Add enrollment logic here after authentic payment
+      const enrolledCount = await enrollCoursesForUser(req.user.id, items);
+
       res.status(200).json({
         success: true,
         message: 'Payment Verified',
-        paymentId: razorpay_payment_id
+        paymentId: razorpay_payment_id,
+        enrolledCount,
+        mode: paymentMode
       });
     } else {
       res.status(400).json({
@@ -90,41 +156,34 @@ exports.verifyPayment = async (req, res, next) => {
   }
 };
 
-const Enrollment = require('../models/Enrollment');
-
 // @desc    Simulate payment and enroll user
 // @route   POST /api/v1/payment/simulate
 // @access  Private
 exports.simulatePayment = async (req, res, next) => {
   try {
-    const { items, amount } = req.body;
-    
+    const paymentMode = getPaymentMode();
+    if (paymentMode !== PAYMENT_MODES.SIMULATE) {
+      return res.status(409).json({
+        success: false,
+        error: 'Payment simulation is disabled while PAYMENT_MODE=razorpay'
+      });
+    }
+
+    const { items } = req.body;
+
     if (!items || items.length === 0) {
       return res.status(400).json({ success: false, error: 'No items in cart' });
     }
 
-    // Create enrollment records for each course
-    for (const item of items) {
-      // Check if already enrolled
-      const existing = await Enrollment.findOne({
-        user: req.user.id,
-        course: item.courseId
-      });
-
-      if (!existing) {
-        await Enrollment.create({
-          user: req.user.id,
-          course: item.courseId,
-          progress: 0
-        });
-      }
-    }
+    const enrolledCount = await enrollCoursesForUser(req.user.id, items);
 
     // Simulate network delay for realism
     setTimeout(() => {
       res.status(200).json({
         success: true,
-        message: 'Mock payment successful and courses enrolled!'
+        message: 'Mock payment successful and courses enrolled!',
+        enrolledCount,
+        mode: paymentMode
       });
     }, 1500);
 
