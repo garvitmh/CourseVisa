@@ -49,6 +49,22 @@ export interface User {
   createdAt: Date;
   avatar?: string;
   bio?: string;
+  twoFactorEnabled?: boolean;
+  notificationPreferences?: {
+    securityAlerts: boolean;
+    courseUpdates: boolean;
+    promoOffers: boolean;
+    weeklyNewsletter: boolean;
+  };
+  paymentMethods?: Array<{
+    _id?: string;
+    brand: string;
+    last4: string;
+    expiryMonth: number;
+    expiryYear: number;
+    holderName?: string;
+    isDefault?: boolean;
+  }>;
 }
 
 export interface AuthState {

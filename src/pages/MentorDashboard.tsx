@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, CardHeader, CardBody, Button, Badge, CloudinaryUploadWidget } from '../components/shared';
-import { LayoutDashboard, BookOpen, PlusCircle, BarChart3, Settings, Users, Star, DollarSign, Image as ImageIcon, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Card, CardHeader, CardBody, Button, Badge, CloudinaryUploadWidget, Input } from '../components/shared';
+import { LayoutDashboard, BookOpen, PlusCircle, BarChart3, Settings, Users, Star, DollarSign, Image as ImageIcon, CheckCircle, XCircle, AlertCircle, Video, Trash2 } from 'lucide-react';
 import { formatCurrency } from '../utils/currencies';
 
 const CATEGORIES = [
@@ -26,8 +26,17 @@ export default function MentorDashboard() {
   const [newCourse, setNewCourse] = useState(EMPTY_COURSE);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingCourse, setIsSavingCourse] = useState(false);
   const [toast, setToast] = useState<ToastType>(null);
   const [stats, setStats] = useState({ totalStudents: 0, totalEarnings: 0, rating: 4.8 });
+  const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null);
+  const [editingCourse, setEditingCourse] = useState<any | null>(null);
+  const [videoDraft, setVideoDraft] = useState({
+    title: '',
+    videoUrl: '',
+    duration: '',
+    isTrial: false,
+  });
 
   const showToast = (type: 'success' | 'error', message: string) => {
     setToast({ type, message });
@@ -159,9 +168,127 @@ export default function MentorDashboard() {
     }
   };
 
+  const startManagingCourse = (course: any) => {
+    if (expandedCourseId === course._id) {
+      setExpandedCourseId(null);
+      setEditingCourse(null);
+      setVideoDraft({ title: '', videoUrl: '', duration: '', isTrial: false });
+      return;
+    }
+
+    setExpandedCourseId(course._id);
+    setEditingCourse({
+      _id: course._id,
+      title: course.title || '',
+      description: course.description || '',
+      price: String(course.price || ''),
+      category: course.category || '',
+      image: course.image || '',
+      videos: (course.videos || []).map((v: any) => ({
+        title: v.title || '',
+        videoUrl: v.videoUrl || '',
+        duration: v.duration || '',
+        isTrial: !!v.isTrial,
+      })),
+    });
+    setVideoDraft({ title: '', videoUrl: '', duration: '', isTrial: false });
+  };
+
+  const handleEditingCourseChange = (field: string, value: any) => {
+    setEditingCourse((prev: any) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddVideo = () => {
+    if (!videoDraft.title.trim() || !videoDraft.videoUrl.trim()) {
+      showToast('error', 'Video title and URL are required.');
+      return;
+    }
+
+    setEditingCourse((prev: any) => ({
+      ...prev,
+      videos: [
+        ...(prev?.videos || []),
+        {
+          title: videoDraft.title.trim(),
+          videoUrl: videoDraft.videoUrl.trim(),
+          duration: videoDraft.duration.trim() || '00:00',
+          isTrial: !!videoDraft.isTrial,
+        },
+      ],
+    }));
+    setVideoDraft({ title: '', videoUrl: '', duration: '', isTrial: false });
+  };
+
+  const handleRemoveVideo = (index: number) => {
+    setEditingCourse((prev: any) => ({
+      ...prev,
+      videos: (prev?.videos || []).filter((_: any, i: number) => i !== index),
+    }));
+  };
+
+  const handleSaveCourseChanges = async () => {
+    if (!editingCourse?._id) return;
+
+    if (!editingCourse.title.trim() || !editingCourse.description.trim()) {
+      showToast('error', 'Course title and description are required.');
+      return;
+    }
+
+    const parsedPrice = Number(editingCourse.price);
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
+      showToast('error', 'Course price must be a valid positive number.');
+      return;
+    }
+
+    setIsSavingCourse(true);
+    try {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`/api/v1/courses/${editingCourse._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: editingCourse.title.trim(),
+          description: editingCourse.description.trim(),
+          price: parsedPrice,
+          category: editingCourse.category,
+          image: editingCourse.image || undefined,
+          videos: (editingCourse.videos || []).map((video: any) => ({
+            title: video.title,
+            videoUrl: video.videoUrl,
+            duration: video.duration || '00:00',
+            isTrial: !!video.isTrial,
+          })),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to update course');
+      }
+
+      await fetchMyCourses();
+      showToast('success', `Course "${data.data.title}" updated successfully.`);
+    } catch (err: any) {
+      showToast('error', err.message || 'Failed to update course.');
+    } finally {
+      setIsSavingCourse(false);
+    }
+  };
+
   // Stable upload callback so CloudinaryWidget does not re-initialize on every keystroke
   const handleImageUpload = useCallback((url: string) => {
     setNewCourse(prev => ({ ...prev, image: url }));
+  }, []);
+
+  const handleEditingCourseImageUpload = useCallback((url: string) => {
+    setEditingCourse((prev: any) => ({ ...prev, image: url }));
+  }, []);
+
+  const handleVideoUpload = useCallback((url: string) => {
+    setVideoDraft((prev) => ({ ...prev, videoUrl: url }));
   }, []);
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -413,26 +540,163 @@ export default function MentorDashboard() {
               ) : (
                 <div className="grid grid-cols-1 gap-4">
                   {courses.map(course => (
-                    <div key={course._id} className="bg-base-100 border border-base-300 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 shadow-sm hover:shadow-md transition-all">
-                      <div className="flex gap-4 items-center w-full sm:w-auto">
-                        <div className="w-24 h-16 rounded-md overflow-hidden bg-base-200 shrink-0">
-                           {course.image ? <img src={course.image} className="w-full h-full object-cover" alt={course.title}/> : <div className="w-full h-full flex items-center justify-center text-base-content/30"><ImageIcon className="w-6 h-6"/></div>}
-                        </div>
-                        <div>
-                          <h3 className="m-0 mb-1 font-bold text-lg truncate max-w-[300px]" title={course.title}>{course.title}</h3>
-                          <div className="flex items-center gap-3 text-sm">
-                            <Badge variant="secondary">{course.category}</Badge>
-                            <span className="font-semibold text-primary">{formatCurrency(course.price)}</span>
-                            <Link to={`/courses/${course._id}`} className="text-base-content/50 hover:text-primary text-xs underline">View Live →</Link>
+                    <div key={course._id} className="space-y-3">
+                      <div className="bg-base-100 border border-base-300 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 shadow-sm hover:shadow-md transition-all">
+                        <div className="flex gap-4 items-center w-full sm:w-auto">
+                          <div className="w-24 h-16 rounded-md overflow-hidden bg-base-200 shrink-0">
+                            {course.image ? <img src={course.image} className="w-full h-full object-cover" alt={course.title}/> : <div className="w-full h-full flex items-center justify-center text-base-content/30"><ImageIcon className="w-6 h-6"/></div>}
+                          </div>
+                          <div>
+                            <h3 className="m-0 mb-1 font-bold text-lg truncate max-w-[300px]" title={course.title}>{course.title}</h3>
+                            <div className="flex items-center gap-3 text-sm">
+                              <Badge variant="secondary">{course.category}</Badge>
+                              <span className="font-semibold text-primary">{formatCurrency(course.price)}</span>
+                              <span className="text-base-content/60 text-xs flex items-center gap-1"><Video className="w-3 h-3" />{(course.videos || []).length} videos</span>
+                              <Link to={`/courses/${course._id}`} className="text-base-content/50 hover:text-primary text-xs underline">View Live →</Link>
+                            </div>
                           </div>
                         </div>
+                        <div className="flex gap-2 w-full sm:w-auto mt-4 sm:mt-0">
+                          <Link to={`/courses/${course._id}`} className="flex-1 sm:flex-none">
+                            <Button variant="outline" size="sm" className="w-full">Preview</Button>
+                          </Link>
+                          <Button variant="primary" size="sm" className="flex-1 sm:flex-none" onClick={() => startManagingCourse(course)}>
+                            {expandedCourseId === course._id ? 'Close Editor' : 'Manage Content'}
+                          </Button>
+                          <Button variant="danger" size="sm" className="flex-1 sm:flex-none" onClick={() => handleDeleteMentorCourse(course._id, course.title)}>Unpublish</Button>
+                        </div>
                       </div>
-                      <div className="flex gap-2 w-full sm:w-auto mt-4 sm:mt-0">
-                        <Link to={`/courses/${course._id}`} className="flex-1 sm:flex-none">
-                          <Button variant="outline" size="sm" className="w-full">Preview</Button>
-                        </Link>
-                        <Button variant="danger" size="sm" className="flex-1 sm:flex-none" onClick={() => handleDeleteMentorCourse(course._id, course.title)}>Unpublish</Button>
-                      </div>
+
+                      {expandedCourseId === course._id && editingCourse?._id === course._id && (
+                        <Card className="bg-base-100 border border-primary/20 shadow-sm">
+                          <CardHeader className="border-b border-base-200 pb-4">
+                            <h3 className="text-xl font-bold">Edit Course & Videos</h3>
+                            <p className="text-sm text-base-content/60">Update details and manage lesson videos for this course.</p>
+                          </CardHeader>
+                          <CardBody className="pt-6 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <Input
+                                label="Course Title"
+                                value={editingCourse.title}
+                                onChange={(e) => handleEditingCourseChange('title', e.target.value)}
+                              />
+                              <Input
+                                label="Price"
+                                type="number"
+                                value={editingCourse.price}
+                                onChange={(e) => handleEditingCourseChange('price', e.target.value)}
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="flex flex-col gap-1">
+                                <label className="font-semibold text-base-content">Category</label>
+                                <select
+                                  className="select select-bordered w-full bg-base-100"
+                                  value={editingCourse.category}
+                                  onChange={(e) => handleEditingCourseChange('category', e.target.value)}
+                                >
+                                  {CATEGORIES.map(c => (
+                                    <option key={c.value} value={c.value}>{c.label}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="flex flex-col gap-2">
+                                <label className="font-semibold text-base-content">Thumbnail</label>
+                                <CloudinaryUploadWidget
+                                  cloudName="dgkzstbui"
+                                  uploadPreset="e-learning"
+                                  onUploadSuccess={handleEditingCourseImageUpload}
+                                  buttonText="Upload Thumbnail"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-1">
+                              <label className="font-semibold text-base-content">Description</label>
+                              <textarea
+                                className="textarea textarea-bordered w-full bg-base-100"
+                                rows={4}
+                                value={editingCourse.description}
+                                onChange={(e) => handleEditingCourseChange('description', e.target.value)}
+                              />
+                            </div>
+
+                            <div className="border border-base-300 rounded-xl p-4 bg-base-200/50 space-y-4">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-bold text-lg flex items-center gap-2"><Video className="w-5 h-5 text-primary" /> Course Videos</h4>
+                                <span className="text-sm text-base-content/60">{(editingCourse.videos || []).length} added</span>
+                              </div>
+
+                              {(editingCourse.videos || []).length === 0 ? (
+                                <p className="text-sm text-base-content/60">No videos yet. Add at least one lesson video.</p>
+                              ) : (
+                                <div className="space-y-2">
+                                  {(editingCourse.videos || []).map((video: any, index: number) => (
+                                    <div key={`${video.title}-${index}`} className="p-3 border border-base-300 rounded-lg bg-base-100 flex justify-between items-center gap-3">
+                                      <div className="min-w-0">
+                                        <div className="font-semibold truncate">{video.title}</div>
+                                        <div className="text-xs text-base-content/60 truncate">{video.videoUrl}</div>
+                                        <div className="text-xs text-base-content/50">{video.duration} {video.isTrial ? '• Free Preview' : ''}</div>
+                                      </div>
+                                      <Button variant="danger" size="sm" onClick={() => handleRemoveVideo(index)}><Trash2 className="w-4 h-4" /></Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+
+                              <div className="border-t border-base-300 pt-4 space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  <Input
+                                    label="Video Title"
+                                    value={videoDraft.title}
+                                    onChange={(e) => setVideoDraft((prev) => ({ ...prev, title: e.target.value }))}
+                                  />
+                                  <Input
+                                    label="Duration"
+                                    placeholder="e.g. 08:35"
+                                    value={videoDraft.duration}
+                                    onChange={(e) => setVideoDraft((prev) => ({ ...prev, duration: e.target.value }))}
+                                  />
+                                </div>
+                                <Input
+                                  label="Video URL"
+                                  value={videoDraft.videoUrl}
+                                  onChange={(e) => setVideoDraft((prev) => ({ ...prev, videoUrl: e.target.value }))}
+                                  placeholder="https://..."
+                                />
+                                <div className="flex flex-wrap items-center gap-3">
+                                  <CloudinaryUploadWidget
+                                    cloudName="dgkzstbui"
+                                    uploadPreset="e-learning"
+                                    resourceType="video"
+                                    onUploadSuccess={handleVideoUpload}
+                                    buttonText="Upload Video"
+                                  />
+                                  <label className="label cursor-pointer gap-2">
+                                    <input
+                                      type="checkbox"
+                                      className="checkbox checkbox-sm checkbox-primary"
+                                      checked={videoDraft.isTrial}
+                                      onChange={(e) => setVideoDraft((prev) => ({ ...prev, isTrial: e.target.checked }))}
+                                    />
+                                    <span className="label-text">Mark as free preview</span>
+                                  </label>
+                                  <Button variant="primary" size="sm" onClick={handleAddVideo}>
+                                    Add Video
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex justify-end">
+                              <Button variant="primary" onClick={handleSaveCourseChanges} disabled={isSavingCourse}>
+                                {isSavingCourse ? 'Saving...' : 'Save Course Changes'}
+                              </Button>
+                            </div>
+                          </CardBody>
+                        </Card>
+                      )}
                     </div>
                   ))}
                 </div>

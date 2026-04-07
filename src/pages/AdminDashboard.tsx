@@ -228,7 +228,21 @@ export default function AdminDashboard() {
                           </td>
                           <td className="text-right">
                              <div className="flex justify-end gap-2">
-                               <Button variant="outline" size="sm" className="bg-base-100 shadow-sm" onClick={() => app.linkedinUrl ? window.open(app.linkedinUrl, '_blank') : alert('No resume link provided by applicant.')}><ExternalLink className="w-4 h-4 mr-1"/>Resume</Button>
+                               <Button
+                                 variant="outline"
+                                 size="sm"
+                                 className="bg-base-100 shadow-sm"
+                                 onClick={() => {
+                                   const resumeLink = app.resumeUrl || app.linkedinUrl;
+                                   if (resumeLink) {
+                                     window.open(resumeLink, '_blank');
+                                   } else {
+                                     alert('No resume link provided by applicant.');
+                                   }
+                                 }}
+                               >
+                                 <ExternalLink className="w-4 h-4 mr-1"/>Resume
+                               </Button>
                                {app.status === 'pending' && (
                                  <>
                                   <Button variant="primary" size="sm" className="shadow-sm" onClick={() => handleUpdateApplicationStatus(app.id || app._id, 'accepted')}><CheckCircle className="w-4 h-4"/></Button>

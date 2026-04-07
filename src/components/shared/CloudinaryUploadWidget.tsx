@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Button } from './Button';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, Video } from 'lucide-react';
 
 interface CloudinaryUploadWidgetProps {
   onUploadSuccess: (url: string) => void;
@@ -8,6 +8,8 @@ interface CloudinaryUploadWidgetProps {
   uploadPreset: string;
   buttonText?: string;
   className?: string;
+  resourceType?: 'image' | 'video' | 'auto';
+  maxFiles?: number;
 }
 
 export const CloudinaryUploadWidget = ({
@@ -15,15 +17,15 @@ export const CloudinaryUploadWidget = ({
   cloudName,
   uploadPreset,
   buttonText = 'Upload Image',
-  className = ''
+  className = '',
+  resourceType = 'image',
+  maxFiles = 1,
 }: CloudinaryUploadWidgetProps) => {
   const widgetRef = useRef<any>(null);
-  // Store the callback in a ref so the effect never re-fires due to a new function reference
   const callbackRef = useRef(onUploadSuccess);
   callbackRef.current = onUploadSuccess;
 
   useEffect(() => {
-    // Only initialize once — independent of the parent's state changes
     if ('cloudinary' in window) {
       const cloudinary = (window as any).cloudinary;
       widgetRef.current = cloudinary.createUploadWidget(
@@ -31,8 +33,9 @@ export const CloudinaryUploadWidget = ({
           cloudName,
           uploadPreset,
           sources: ['local', 'url', 'unsplash'],
-          multiple: false,
-          maxFiles: 1,
+          multiple: maxFiles > 1,
+          maxFiles,
+          resourceType,
         },
         (error: any, result: any) => {
           if (!error && result && result.event === 'success') {
@@ -41,8 +44,7 @@ export const CloudinaryUploadWidget = ({
         }
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cloudName, uploadPreset]); // ← onUploadSuccess intentionally excluded
+  }, [cloudName, uploadPreset, resourceType, maxFiles]);
 
   const handleOpenWidget = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -54,12 +56,12 @@ export const CloudinaryUploadWidget = ({
   };
 
   return (
-    <Button 
-      variant="outline" 
-      onClick={handleOpenWidget} 
+    <Button
+      variant="outline"
+      onClick={handleOpenWidget}
       className={`flex items-center gap-2 ${className}`}
     >
-      <ImagePlus className="w-4 h-4" />
+      {resourceType === 'video' ? <Video className="w-4 h-4" /> : <ImagePlus className="w-4 h-4" />}
       {buttonText}
     </Button>
   );

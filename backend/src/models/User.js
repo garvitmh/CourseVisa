@@ -44,6 +44,33 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  avatar: {
+    type: String,
+    default: ''
+  },
+  bio: {
+    type: String,
+    default: ''
+  },
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  notificationPreferences: {
+    securityAlerts: { type: Boolean, default: true },
+    courseUpdates: { type: Boolean, default: true },
+    promoOffers: { type: Boolean, default: false },
+    weeklyNewsletter: { type: Boolean, default: false }
+  },
+  paymentMethods: [{
+    brand: { type: String, default: 'Card' },
+    last4: { type: String, required: true },
+    expiryMonth: { type: Number, min: 1, max: 12, required: true },
+    expiryYear: { type: Number, min: 2000, required: true },
+    holderName: { type: String, default: '' },
+    isDefault: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
+  }],
   resetPasswordToken: String,
   resetPasswordExpire: Date
 });

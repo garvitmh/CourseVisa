@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -146,7 +147,13 @@ const sendTokenResponse = (user, statusCode, res) => {
       username: user.username,
       email: user.email,
       role: user.role,
-      status: user.status
+      status: user.status,
+      phone: user.phone,
+      avatar: user.avatar,
+      bio: user.bio,
+      twoFactorEnabled: !!user.twoFactorEnabled,
+      notificationPreferences: user.notificationPreferences || undefined,
+      paymentMethods: user.paymentMethods || []
     }
   });
 };
@@ -187,10 +194,82 @@ exports.getUsers = async (req, res, next) => {
 // @access  Private
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { username, phone } = req.body;
+    const {
+      username,
+      phone,
+      bio,
+      avatar,
+      twoFactorEnabled,
+      notificationPreferences,
+      paymentMethods
+    } = req.body;
+
     const fieldsToUpdate = {};
     if (username && username.trim()) fieldsToUpdate.username = username.trim();
-    if (phone !== undefined) fieldsToUpdate.phone = phone;
+    if (phone !== undefined) {
+      const normalizedPhone = String(phone).trim();
+      fieldsToUpdate.phone = normalizedPhone || undefined;
+    }
+    if (bio !== undefined) fieldsToUpdate.bio = String(bio).trim();
+    if (avatar !== undefined) fieldsToUpdate.avatar = String(avatar).trim();
+
+    if (typeof twoFactorEnabled === 'boolean') {
+      fieldsToUpdate.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    if (notificationPreferences && typeof notificationPreferences === 'object') {
+      fieldsToUpdate.notificationPreferences = {
+        securityAlerts: !!notificationPreferences.securityAlerts,
+        courseUpdates: !!notificationPreferences.courseUpdates,
+        promoOffers: !!notificationPreferences.promoOffers,
+        weeklyNewsletter: !!notificationPreferences.weeklyNewsletter
+      };
+    }
+
+    if (Array.isArray(paymentMethods)) {
+      const normalizedPaymentMethods = paymentMethods
+        .map((method) => {
+          const last4 = String(method.last4 || '').replace(/\D/g, '').slice(-4);
+          const expiryMonth = Number(method.expiryMonth);
+          const expiryYear = Number(method.expiryYear);
+
+          if (!last4 || last4.length !== 4) return null;
+          if (!Number.isInteger(expiryMonth) || expiryMonth < 1 || expiryMonth > 12) return null;
+          if (!Number.isInteger(expiryYear) || expiryYear < 2000) return null;
+
+          const normalized = {
+            brand: String(method.brand || 'Card'),
+            last4,
+            expiryMonth,
+            expiryYear,
+            holderName: String(method.holderName || '').trim(),
+            isDefault: !!method.isDefault,
+          };
+
+          if (method._id && mongoose.Types.ObjectId.isValid(method._id)) {
+            normalized._id = method._id;
+          }
+
+          return normalized;
+        })
+        .filter(Boolean);
+
+      if (normalizedPaymentMethods.length > 0) {
+        const hasExplicitDefault = normalizedPaymentMethods.some((m) => m.isDefault);
+        if (!hasExplicitDefault) normalizedPaymentMethods[0].isDefault = true;
+
+        let hasSetDefault = false;
+        normalizedPaymentMethods.forEach((m) => {
+          if (m.isDefault && !hasSetDefault) {
+            hasSetDefault = true;
+            return;
+          }
+          m.isDefault = false;
+        });
+      }
+
+      fieldsToUpdate.paymentMethods = normalizedPaymentMethods;
+    }
 
     const user = await User.findByIdAndUpdate(
       req.user.id,

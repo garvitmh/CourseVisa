@@ -115,6 +115,7 @@ exports.getApplications = async (req, res, next) => {
       status: app.status || 'pending',
       date: app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '',
       linkedinUrl: app.linkedinUrl || null,
+      resumeUrl: app.resumeUrl || null,
       email: app.email,
       bio: app.bio,
       qualifications: app.qualifications,
